@@ -26,6 +26,26 @@ func (t *Telegram) SetToken(token string) *Telegram {
 	return t
 }
 
+func (t *Telegram) post(path string, params interface{}, result interface{}) (interface{}, error) {
+	err := t.client.post(path, params, &result)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (t *Telegram) get(path string, params map[string]string, result interface{}) (interface{}, error) {
+	err := t.client.get(path, params, &result)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
 func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*MessageDeleteOptions) (*models.MessageResponse, error) {
 	var apiResponse *models.MessageResponse
 
@@ -68,24 +88,12 @@ func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*M
 	return apiResponse, nil
 }
 
-func (t *Telegram) post(path string, params interface{}, result interface{}) (interface{}, error) {
-	err := t.client.post(path, params, &result)
+func (t *Telegram) EditMessageText(params *requests.EditMessage) (*models.MessageResponse, error) {
+	var apiResponse *models.MessageResponse
 
-	if err != nil {
-		return nil, err
-	}
+	result, err := t.post("editMessageText", params.GetParams(), &apiResponse)
 
-	return result, nil
-}
-
-func (t *Telegram) get(path string, params map[string]string, result interface{}) (interface{}, error) {
-	err := t.client.get(path, params, &result)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return result, nil
+	return result.(*models.MessageResponse), err
 }
 
 func (t *Telegram) DeleteMessage(params *requests.Message) (*models.ApiResponse, error) {
@@ -148,14 +156,6 @@ func (t *Telegram) PromoteChatMember(params *requests.Promote) (*models.ApiRespo
 	var apiResponse *models.ApiResponse
 
 	result, err := t.post("promoteChatMember", params, &apiResponse)
-
-	return result.(*models.ApiResponse), err
-}
-
-func (t *Telegram) PromoteChatMember2(params map[string]string) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
-
-	result, err := t.get("promoteChatMember", params, &apiResponse)
 
 	return result.(*models.ApiResponse), err
 }
