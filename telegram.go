@@ -1,9 +1,10 @@
 package telegram_api
 
 import (
-	"telegram_api/models"
-	"telegram_api/requests"
 	"time"
+
+	"github.com/jonneyless/telegram-api/models"
+	"github.com/jonneyless/telegram-api/requests"
 )
 
 var telegram *Telegram

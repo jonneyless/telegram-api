@@ -1,8 +1,8 @@
 package requests
 
 import (
-	"telegram_api/models"
-	"telegram_api/utils"
+	"github.com/jonneyless/telegram-api/models"
+	"github.com/jonneyless/telegram-api/utils"
 )
 
 type SendMessage struct {
