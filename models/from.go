@@ -1,5 +1,7 @@
 package models
 
+import "strings"
+
 // From struct
 type From struct {
 	ID           int64  `json:"id"`
@@ -9,4 +11,8 @@ type From struct {
 	LastName     string `json:"last_name"`
 	Username     string `json:"username"`
 	LanguageCode string `json:"language_code"`
+}
+
+func (form *From) FullName() string {
+	return strings.TrimSpace(form.FirstName + " " + form.LastName)
 }
