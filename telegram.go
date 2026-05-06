@@ -27,7 +27,7 @@ func (t *Telegram) SetToken(token string) *Telegram {
 }
 
 func (t *Telegram) post(path string, params interface{}, result interface{}) (interface{}, error) {
-	err := t.client.post(path, params, &result)
+	err := t.client.post(path, params, result)
 
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (t *Telegram) post(path string, params interface{}, result interface{}) (in
 }
 
 func (t *Telegram) get(path string, params map[string]string, result interface{}) (interface{}, error) {
-	err := t.client.get(path, params, &result)
+	err := t.client.get(path, params, result)
 
 	if err != nil {
 		return nil, err
