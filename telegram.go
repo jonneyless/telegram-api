@@ -26,14 +26,8 @@ func (t *Telegram) SetToken(token string) *Telegram {
 	return t
 }
 
-func (t *Telegram) post(path string, params interface{}, result interface{}) (interface{}, error) {
-	err := t.client.post(path, params, result)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return result, nil
+func (t *Telegram) post(path string, params interface{}, result interface{}) error {
+	return t.client.post(path, params, result)
 }
 
 func (t *Telegram) get(path string, params map[string]string, result interface{}) (interface{}, error) {
@@ -60,7 +54,7 @@ func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*M
 		apiPath = "sendDocument"
 	}
 
-	_, err := t.post(apiPath, params.GetParams(), &apiResponse)
+	err := t.post(apiPath, params.GetParams(), &apiResponse)
 	if err != nil {
 		return nil, err
 	}
@@ -91,113 +85,155 @@ func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*M
 func (t *Telegram) EditMessageText(params *requests.EditMessage) (*models.MessageResponse, error) {
 	var apiResponse *models.MessageResponse
 
-	result, err := t.post("editMessageText", params.GetParams(), &apiResponse)
+	err := t.post("editMessageText", params.GetParams(), &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.MessageResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) DeleteMessage(params *requests.Message) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
 
-	result, err := t.post("deleteMessage", params, &apiResponse)
+	err := t.post("deleteMessage", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.ApiResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) SendPoll(params *requests.SendPoll) (*models.MessageResponse, error) {
 	var apiResponse *models.MessageResponse
 
-	result, err := t.post("sendPoll", params, &apiResponse)
+	err := t.post("sendPoll", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.MessageResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) SendDice(params *requests.SendDice) (*models.MessageResponse, error) {
 	var apiResponse *models.MessageResponse
 
-	result, err := t.post("sendDice", params, &apiResponse)
+	err := t.post("sendDice", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.MessageResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) AnswerCallbackQuery(params *requests.AnswerCallbackQuery) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
 
-	result, err := t.post("answerCallbackQuery", params.GetParams(), &apiResponse)
+	err := t.post("answerCallbackQuery", params.GetParams(), &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.ApiResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) GetChat(params *requests.Chat) (*models.ChatResponse, error) {
 	var apiResponse *models.ChatResponse
 
-	result, err := t.post("getChat", params, &apiResponse)
+	err := t.post("getChat", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.ChatResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) GetChatMember(params *requests.Member) (*models.ChatMemberResponse, error) {
 	var apiResponse *models.ChatMemberResponse
 
-	result, err := t.post("getChatMember", params, &apiResponse)
+	err := t.post("getChatMember", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.ChatMemberResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) RestrictChatMember(params *requests.Restrict) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
 
-	result, err := t.post("restrictChatMember", params, &apiResponse)
+	err := t.post("restrictChatMember", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.ApiResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) PromoteChatMember(params *requests.Promote) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
 
-	result, err := t.post("promoteChatMember", params, &apiResponse)
+	err := t.post("promoteChatMember", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.ApiResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) GetChatAdministrators(params *requests.Chat) (*models.ChatMembersResponse, error) {
 	var apiResponse *models.ChatMembersResponse
 
-	result, err := t.post("getChatAdministrators", params, &apiResponse)
+	err := t.post("getChatAdministrators", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.ChatMembersResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) CreateChatInviteLink(params *requests.CreateChatInviteLink) (*models.ChatInviteLinkResponse, error) {
 	var apiResponse *models.ChatInviteLinkResponse
 
-	result, err := t.post("createChatInviteLink", params, &apiResponse)
+	err := t.post("createChatInviteLink", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.ChatInviteLinkResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) ApproveChatJoinRequest(params *requests.Member) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
 
-	result, err := t.post("approveChatJoinRequest", params, &apiResponse)
+	err := t.post("approveChatJoinRequest", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.ApiResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) DeclineChatJoinRequest(params *requests.Member) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
 
-	result, err := t.post("declineChatJoinRequest", params, &apiResponse)
+	err := t.post("declineChatJoinRequest", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.ApiResponse), err
+	return apiResponse, err
 }
 
 func (t *Telegram) GetFile(params *requests.File) (*models.FileResponse, error) {
 	var apiResponse *models.FileResponse
 
-	result, err := t.post("getFile", params, &apiResponse)
+	err := t.post("getFile", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-	return result.(*models.FileResponse), err
+	return apiResponse, err
 }
 
 type TelegramApi struct {
