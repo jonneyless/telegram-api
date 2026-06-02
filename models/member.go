@@ -1,23 +1,26 @@
 package models
 
 type Member struct {
-	User                From   `json:"user"`
-	Status              string `json:"status"`
-	CanBeEdited         *bool  `json:"can_be_edited"`
-	CanManageChat       *bool  `json:"can_manage_chat"`
-	CanChangeInfo       *bool  `json:"can_change_info"`
-	CanDeleteMessages   *bool  `json:"can_delete_messages"`
-	CanInviteUsers      *bool  `json:"can_invite_users"`
-	CanRestrictMembers  *bool  `json:"can_restrict_members"`
-	CanPinMessages      *bool  `json:"can_pin_messages"`
-	CanManageTopics     *bool  `json:"can_manage_topics"`
-	CanPromoteMembers   *bool  `json:"can_promote_members"`
-	CanManageVideoChats *bool  `json:"can_manage_video_chats"`
-	CanPostStories      *bool  `json:"can_post_stories"`
-	CanEditStories      *bool  `json:"can_edit_stories"`
-	CanDeleteStories    *bool  `json:"can_delete_stories"`
-	IsAnonymous         *bool  `json:"is_anonymous"`
-	CanManageVoiceChats *bool  `json:"can_manage_voice_chats"`
+	User                From    `json:"user"`
+	Status              string  `json:"status"`
+	CustomTitle         *string `json:"custom_title"`
+	Tag                 *string `json:"tag"`
+	CanBeEdited         *bool   `json:"can_be_edited"`
+	CanManageChat       *bool   `json:"can_manage_chat"`
+	CanChangeInfo       *bool   `json:"can_change_info"`
+	CanDeleteMessages   *bool   `json:"can_delete_messages"`
+	CanInviteUsers      *bool   `json:"can_invite_users"`
+	CanRestrictMembers  *bool   `json:"can_restrict_members"`
+	CanPinMessages      *bool   `json:"can_pin_messages"`
+	CanManageTopics     *bool   `json:"can_manage_topics"`
+	CanPromoteMembers   *bool   `json:"can_promote_members"`
+	CanManageVideoChats *bool   `json:"can_manage_video_chats"`
+	CanPostStories      *bool   `json:"can_post_stories"`
+	CanEditStories      *bool   `json:"can_edit_stories"`
+	CanDeleteStories    *bool   `json:"can_delete_stories"`
+	IsAnonymous         *bool   `json:"is_anonymous"`
+	CanManageVoiceChats *bool   `json:"can_manage_voice_chats"`
+	IsMember            *bool   `json:"is_member"`
 }
 
 func (m *Member) Permissions() map[string]bool {
