@@ -12,3 +12,8 @@ type Chat struct {
 	HasVisibleHistory           bool   `json:"has_visible_history"`
 	AllMembersAreAdministrators bool   `json:"all_members_are_administrators"`
 }
+
+// IsPrivate 私聊
+func (m *Chat) IsPrivate() bool {
+	return m.Type == "private"
+}

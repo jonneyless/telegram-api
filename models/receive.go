@@ -45,3 +45,93 @@ func (m *ReceiveMessage) IsPoll() bool {
 func (m *ReceiveMessage) IsPollAnswer() bool {
 	return m.PollAnswer != nil
 }
+
+func (m *ReceiveMessage) Text() string {
+	if m.IsMessage() {
+		if m.Message.Caption != nil && m.Message.Text == nil {
+			return *m.Message.Caption
+		}
+
+		return *m.Message.Text
+	}
+
+	if m.IsEditedMessage() {
+		return m.EditedMessage.Text
+	}
+
+	return ""
+}
+
+func (m *ReceiveMessage) From() *From {
+	if m.IsMessage() {
+		return &m.Message.From
+	}
+
+	if m.IsEditedMessage() {
+		return &m.EditedMessage.From
+	}
+
+	if m.IsCallbackQuery() {
+		return &m.CallbackQuery.Message.From
+	}
+
+	if m.IsChatJoinRequest() {
+		return &m.ChatJoinRequest.From
+	}
+
+	if m.IsChatMember() {
+		return &m.ChatMember.From
+	}
+
+	if m.IsMyChatMember() {
+		return &m.MyChatMember.From
+	}
+
+	return nil
+}
+
+func (m *ReceiveMessage) FromId() int64 {
+	from := m.From()
+	if from != nil {
+		return from.ID
+	}
+
+	return 0
+}
+
+func (m *ReceiveMessage) Chat() *Chat {
+	if m.IsMessage() {
+		return &m.Message.Chat
+	}
+
+	if m.IsEditedMessage() {
+		return &m.EditedMessage.Chat
+	}
+
+	if m.IsCallbackQuery() {
+		return &m.CallbackQuery.Message.Chat
+	}
+
+	if m.IsChatJoinRequest() {
+		return &m.ChatJoinRequest.Chat
+	}
+
+	if m.IsChatMember() {
+		return &m.ChatMember.Chat
+	}
+
+	if m.IsMyChatMember() {
+		return &m.MyChatMember.Chat
+	}
+
+	return nil
+}
+
+func (m *ReceiveMessage) ChatId() int64 {
+	chat := m.Chat()
+	if chat != nil {
+		return chat.ID
+	}
+
+	return 0
+}

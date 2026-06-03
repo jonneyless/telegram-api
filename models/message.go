@@ -125,7 +125,7 @@ func (m *Message) IsGroupMange(key string, params ...bool) (bool, []string) {
 
 // IsPrivate 私聊
 func (m *Message) IsPrivate() bool {
-	return m.Chat.Type == "private"
+	return m.Chat.IsPrivate()
 }
 
 // IsReplyToMessage 回复消息
