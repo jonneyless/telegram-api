@@ -48,11 +48,13 @@ func (m *ReceiveMessage) IsPollAnswer() bool {
 
 func (m *ReceiveMessage) Text() string {
 	if m.IsMessage() {
-		if m.Message.Caption != nil && m.Message.Text == nil {
-			return *m.Message.Caption
+		if m.Message.Text != nil {
+			return *m.Message.Text
 		}
 
-		return *m.Message.Text
+		if m.Message.Caption != nil {
+			return *m.Message.Caption
+		}
 	}
 
 	if m.IsEditedMessage() {
