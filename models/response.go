@@ -35,6 +35,12 @@ type ChatResponse struct {
 	Result Chat `json:"result"`
 }
 
+// ChatMemberCountResponse struct
+type ChatMemberCountResponse struct {
+	Ok     bool  `json:"ok"`
+	Result int64 `json:"result"`
+}
+
 // ChatMemberResponse struct
 type ChatMemberResponse struct {
 	Ok     bool   `json:"ok"`

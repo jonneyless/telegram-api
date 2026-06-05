@@ -133,6 +133,11 @@ func (m *Message) IsReplyToMessage() bool {
 	return m.ReplyToMessage != nil
 }
 
+// IsForwardMessage 转发消息
+func (m *Message) IsForwardMessage() bool {
+	return m.ForwardOrigin != nil
+}
+
 // IsActionMessage 系统消息
 func (m *Message) IsActionMessage() bool {
 	return m.IsNewChatMember() || m.IsLeftChatMember() || m.IsUpdateChatTitle() || m.IsUpdateChatPhoto() || m.IsPinnedMessage()

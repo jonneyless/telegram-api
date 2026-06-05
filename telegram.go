@@ -148,6 +148,61 @@ func (t *Telegram) GetChat(params *requests.Chat) (*models.ChatResponse, error) 
 	return apiResponse, err
 }
 
+func (t *Telegram) LeaveChat(params *requests.Chat) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("leaveChat", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
+func (t *Telegram) SetChatTitle(params *requests.ChatTitle) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("setChatTitle", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
+func (t *Telegram) PinChatMessage(params *requests.Message) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("pinChatMessage", params.GetParams(), &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
+func (t *Telegram) UnPinChatMessage(params *requests.Message) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("unpinChatMessage", params.GetParams(), &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
+func (t *Telegram) UnPinAllChatMessage(params *requests.Chat) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("unpinAllChatMessage", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
 func (t *Telegram) GetChatMember(params *requests.Member) (*models.ChatMemberResponse, error) {
 	var apiResponse *models.ChatMemberResponse
 
@@ -170,6 +225,28 @@ func (t *Telegram) RestrictChatMember(params *requests.Restrict) (*models.ApiRes
 	return apiResponse, err
 }
 
+func (t *Telegram) BanChatMember(params *requests.Ban) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("banChatMember", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
+func (t *Telegram) UnBanChatMember(params *requests.UnBan) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("unbanChatMember", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
 func (t *Telegram) PromoteChatMember(params *requests.Promote) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
 
@@ -181,10 +258,32 @@ func (t *Telegram) PromoteChatMember(params *requests.Promote) (*models.ApiRespo
 	return apiResponse, err
 }
 
+func (t *Telegram) SetChatMemberTag(params *requests.Tag) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("setChatMemberTag", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
 func (t *Telegram) GetChatAdministrators(params *requests.Chat) (*models.ChatMembersResponse, error) {
 	var apiResponse *models.ChatMembersResponse
 
 	err := t.post("getChatAdministrators", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
+func (t *Telegram) GetChatMemberCount(params *requests.Chat) (*models.ChatMemberCountResponse, error) {
+	var apiResponse *models.ChatMemberCountResponse
+
+	err := t.post("getChatMemberCount", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}

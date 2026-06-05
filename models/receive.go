@@ -47,7 +47,7 @@ func (m *ReceiveMessage) IsPollAnswer() bool {
 }
 
 func (m *ReceiveMessage) Text() string {
-	if m.IsMessage() {
+	if m.Message.IsMessage() {
 		if m.Message.Text != nil {
 			return *m.Message.Text
 		}
