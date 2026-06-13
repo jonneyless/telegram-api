@@ -15,6 +15,7 @@ type SendMessage struct {
 	ParseMode           *string                    `json:"parse_mode"`
 	ReplyMarkup         *models.ReplyMarkup        `json:"reply_markup"`
 	Buttons             [][]map[string]interface{} `json:"buttons"`
+	ButtonType          string                     `json:"button_type"`
 	DisableNotification bool                       `json:"disable_notification"`
 	LinkPreviewOptions  *LinkPreviewOptions        `json:"link_preview_options"`
 	ReplyParameters     *ReplyParameters           `json:"reply_parameters"`
@@ -55,8 +56,15 @@ func (p *SendMessage) GetParams() map[string]interface{} {
 	if p.ReplyMarkup != nil {
 		params["reply_markup"] = utils.Struct2Map(p.ReplyMarkup)
 	} else if len(p.Buttons) > 0 {
-		params["reply_markup"] = map[string]interface{}{
-			"inline_keyboard": p.Buttons,
+		if p.ButtonType == "keyboard" {
+			params["reply_markup"] = map[string]interface{}{
+				"keyboard":        p.Buttons,
+				"resize_keyboard": true,
+			}
+		} else {
+			params["reply_markup"] = map[string]interface{}{
+				"inline_keyboard": p.Buttons,
+			}
 		}
 	}
 

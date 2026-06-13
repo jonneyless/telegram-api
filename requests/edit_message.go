@@ -6,12 +6,13 @@ import (
 )
 
 type EditMessage struct {
-	ChatId      int64                      `json:"chat_id"`
-	MessageId   int64                      `json:"message_id"`
-	Text        string                     `json:"text"`
-	ParseMode   *string                    `json:"parse_mode"`
-	Buttons     [][]map[string]interface{} `json:"buttons"`
-	ReplyMarkup *models.ReplyMarkup        `json:"reply_markup"`
+	ChatId             int64                      `json:"chat_id"`
+	MessageId          int64                      `json:"message_id"`
+	Text               string                     `json:"text"`
+	ParseMode          *string                    `json:"parse_mode"`
+	Buttons            [][]map[string]interface{} `json:"buttons"`
+	ReplyMarkup        *models.ReplyMarkup        `json:"reply_markup"`
+	LinkPreviewOptions *LinkPreviewOptions        `json:"link_preview_options"`
 }
 
 func (p *EditMessage) GetParams() map[string]interface{} {
@@ -33,6 +34,17 @@ func (p *EditMessage) GetParams() map[string]interface{} {
 		params["reply_markup"] = map[string]interface{}{
 			"inline_keyboard": p.Buttons,
 		}
+	}
+
+	if p.LinkPreviewOptions != nil {
+		linkPreviewOptions := map[string]interface{}{
+			"is_disabled": p.LinkPreviewOptions.IsDisabled,
+		}
+		if p.LinkPreviewOptions.Url != nil {
+			linkPreviewOptions["url"] = p.LinkPreviewOptions.Url
+		}
+
+		params["link_preview_options"] = linkPreviewOptions
 	}
 
 	return params

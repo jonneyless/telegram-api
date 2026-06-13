@@ -80,6 +80,7 @@ type Entities struct {
 	Type   string `json:"type"`
 	Offset int64  `json:"offset"`
 	Length int64  `json:"length"`
+	User   *From  `json:"user"`
 }
 
 // IsCommand 匹配命令

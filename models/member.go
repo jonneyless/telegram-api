@@ -63,7 +63,7 @@ func (m *Member) IsBanned() bool {
 }
 
 func (m *Member) IsLeft() bool {
-	return m.Status == "left"
+	return m.Status == "left" || m.Status == ""
 }
 
 func (m *Member) Permissions() map[string]bool {

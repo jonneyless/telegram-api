@@ -95,8 +95,14 @@ func (t *Telegram) EditMessageText(params *requests.EditMessage) (*models.Messag
 
 func (t *Telegram) DeleteMessage(params *requests.Message) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
+	var err error
 
-	err := t.post("deleteMessage", params, &apiResponse)
+	if len(params.MessageIds) > 0 {
+		err = t.post("deleteMessages", params, &apiResponse)
+	} else {
+		err = t.post("deleteMessage", params, &apiResponse)
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -159,10 +165,43 @@ func (t *Telegram) LeaveChat(params *requests.Chat) (*models.ApiResponse, error)
 	return apiResponse, err
 }
 
+func (t *Telegram) SetChatPhoto(params *requests.ChatPhoto) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("setChatPhoto", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
+func (t *Telegram) DeleteChatPhoto(params *requests.Chat) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("deleteChatPhoto", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
 func (t *Telegram) SetChatTitle(params *requests.ChatTitle) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
 
 	err := t.post("setChatTitle", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
+func (t *Telegram) SetChatDescription(params *requests.ChatDescription) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("setChatDescription", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
@@ -251,6 +290,28 @@ func (t *Telegram) PromoteChatMember(params *requests.Promote) (*models.ApiRespo
 	var apiResponse *models.ApiResponse
 
 	err := t.post("promoteChatMember", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
+func (t *Telegram) SetChatPermissions(params *requests.SetChatPermissions) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("setChatPermissions", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResponse, err
+}
+
+func (t *Telegram) SetChatAdministratorCustomTitle(params *requests.CustomTitle) (*models.ApiResponse, error) {
+	var apiResponse *models.ApiResponse
+
+	err := t.post("setChatAdministratorCustomTitle", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
