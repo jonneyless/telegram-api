@@ -4,8 +4,8 @@ type AnswerCallbackQuery struct {
 	CallbackQueryId string  `json:"callback_query_id"`
 	Text            string  `json:"text"`
 	ShowAlert       bool    `json:"show_alert"`
-	Url             *string `json:"url"`
-	CacheTime       *int64  `json:"cache_time"`
+	Url             *string `json:"url,omitempty"`
+	CacheTime       *int64  `json:"cache_time,omitempty"`
 }
 
 func (p *AnswerCallbackQuery) GetParams() map[string]interface{} {

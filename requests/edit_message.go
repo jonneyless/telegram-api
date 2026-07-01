@@ -9,10 +9,10 @@ type EditMessage struct {
 	ChatId             int64                      `json:"chat_id"`
 	MessageId          int64                      `json:"message_id"`
 	Text               string                     `json:"text"`
-	ParseMode          *string                    `json:"parse_mode"`
+	ParseMode          *string                    `json:"parse_mode,omitempty"`
 	Buttons            [][]map[string]interface{} `json:"buttons"`
-	ReplyMarkup        *models.ReplyMarkup        `json:"reply_markup"`
-	LinkPreviewOptions *LinkPreviewOptions        `json:"link_preview_options"`
+	ReplyMarkup        *models.ReplyMarkup        `json:"reply_markup,omitempty"`
+	LinkPreviewOptions *LinkPreviewOptions        `json:"link_preview_options,omitempty"`
 }
 
 func (p *EditMessage) GetParams() map[string]interface{} {

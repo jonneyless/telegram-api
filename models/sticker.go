@@ -12,6 +12,6 @@ type Sticker struct {
 	IsAnimated   bool   `json:"is_animated"`
 	IsVideo      bool   `json:"is_video"`
 	Type         string `json:"type"`
-	Thumbnail    *Photo `json:"thumbnail"`
-	Thumb        *Photo `json:"thumb"`
+	Thumbnail    *Photo `json:"thumbnail,omitempty"`
+	Thumb        *Photo `json:"thumb,omitempty"`
 }

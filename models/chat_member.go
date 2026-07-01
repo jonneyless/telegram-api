@@ -8,7 +8,7 @@ type ChatMember struct {
 	Date          int64       `json:"date"`
 	OldChatMember Member      `json:"old_chat_member"`
 	NewChatMember Member      `json:"new_chat_member"`
-	InviteLink    *InviteLink `json:"invite_link"`
+	InviteLink    *InviteLink `json:"invite_link,omitempty"`
 }
 
 // IsLeave 离群

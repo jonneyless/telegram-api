@@ -11,34 +11,34 @@ type Message struct {
 	From                 From            `json:"from"`
 	Chat                 Chat            `json:"chat"`
 	Date                 int64           `json:"date"`
-	Text                 *string         `json:"text"`
-	Caption              *string         `json:"caption"`
-	ReplyMarkup          *ReplyMarkup    `json:"reply_markup"`
-	ReplyToMessage       *ReplyToMessage `json:"reply_to_message"`
-	PinnedMessage        *Message        `json:"pinned_message"`
-	ForwardOrigin        *Origin         `json:"forward_origin"`
-	ForwardFrom          *From           `json:"forward_from"`
-	ForwardFromChat      *Chat           `json:"forward_from_chat"`
-	ForwardFromMessageID *int64          `json:"forward_from_message_id"`
-	ForwardDate          *int64          `json:"forward_date"`
-	ExternalReply        *ExternalReply  `json:"external_reply"`
-	Quote                *Quote          `json:"quote"`
-	LeftChatParticipant  *From           `json:"left_chat_participant"`
-	LeftChatMember       *From           `json:"left_chat_member"`
-	NewChatParticipant   *From           `json:"new_chat_participant"`
-	NewChatMember        *From           `json:"new_chat_member"`
-	NewChatMembers       *[]From         `json:"new_chat_members"`
-	NewChatTitle         *string         `json:"new_chat_title"`
-	NewChatPhoto         *[]Photo        `json:"new_chat_photo"`
-	Entities             *[]Entities     `json:"entities"`
-	Photo                *[]Photo        `json:"photo"`
-	Sticker              *Sticker        `json:"sticker"`
-	Video                *Video          `json:"video"`
-	Audio                *Audio          `json:"audio"`
-	Voice                *Voice          `json:"voice"`
-	Document             *Document       `json:"document"`
-	Dice                 *Dice           `json:"dice"`
-	Poll                 *Poll           `json:"poll"`
+	Text                 *string         `json:"text,omitempty"`
+	Caption              *string         `json:"caption,omitempty"`
+	ReplyMarkup          *ReplyMarkup    `json:"reply_markup,omitempty"`
+	ReplyToMessage       *ReplyToMessage `json:"reply_to_message,omitempty"`
+	PinnedMessage        *Message        `json:"pinned_message,omitempty"`
+	ForwardOrigin        *Origin         `json:"forward_origin,omitempty"`
+	ForwardFrom          *From           `json:"forward_from,omitempty"`
+	ForwardFromChat      *Chat           `json:"forward_from_chat,omitempty"`
+	ForwardFromMessageID *int64          `json:"forward_from_message_id,omitempty"`
+	ForwardDate          *int64          `json:"forward_date,omitempty"`
+	ExternalReply        *ExternalReply  `json:"external_reply,omitempty"`
+	Quote                *Quote          `json:"quote,omitempty"`
+	LeftChatParticipant  *From           `json:"left_chat_participant,omitempty"`
+	LeftChatMember       *From           `json:"left_chat_member,omitempty"`
+	NewChatParticipant   *From           `json:"new_chat_participant,omitempty"`
+	NewChatMember        *From           `json:"new_chat_member,omitempty"`
+	NewChatMembers       *[]From         `json:"new_chat_members,omitempty"`
+	NewChatTitle         *string         `json:"new_chat_title,omitempty"`
+	NewChatPhoto         *[]Photo        `json:"new_chat_photo,omitempty"`
+	Entities             *[]Entities     `json:"entities,omitempty"`
+	Photo                *[]Photo        `json:"photo,omitempty"`
+	Sticker              *Sticker        `json:"sticker,omitempty"`
+	Video                *Video          `json:"video,omitempty"`
+	Audio                *Audio          `json:"audio,omitempty"`
+	Voice                *Voice          `json:"voice,omitempty"`
+	Document             *Document       `json:"document,omitempty"`
+	Dice                 *Dice           `json:"dice,omitempty"`
+	Poll                 *Poll           `json:"poll,omitempty"`
 }
 
 // ReplyToMessage struct
@@ -47,9 +47,9 @@ type ReplyToMessage struct {
 	From        From         `json:"from"`
 	Chat        Chat         `json:"chat"`
 	Date        int64        `json:"date"`
-	Text        *string      `json:"text"`
-	ReplyMarkup *ReplyMarkup `json:"reply_markup"`
-	Entities    *[]Entities  `json:"entities"`
+	Text        *string      `json:"text,omitempty"`
+	ReplyMarkup *ReplyMarkup `json:"reply_markup,omitempty"`
+	Entities    *[]Entities  `json:"entities,omitempty"`
 }
 
 // ExternalReply struct
@@ -80,7 +80,7 @@ type Entities struct {
 	Type   string `json:"type"`
 	Offset int64  `json:"offset"`
 	Length int64  `json:"length"`
-	User   *From  `json:"user"`
+	User   *From  `json:"user,omitempty"`
 }
 
 // IsCommand 匹配命令
@@ -161,7 +161,7 @@ func (m *Message) IsUpdateChatTitle() bool {
 
 // IsUpdateChatPhoto 更改群头像
 func (m *Message) IsUpdateChatPhoto() bool {
-	return m.NewChatPhoto != nil || len(*m.NewChatPhoto) > 0
+	return m.NewChatPhoto != nil
 }
 
 // IsPinnedMessage 消息置顶

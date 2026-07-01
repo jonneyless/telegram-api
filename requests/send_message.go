@@ -12,13 +12,13 @@ type SendMessage struct {
 	Video               string                     `json:"video"`
 	Audio               string                     `json:"audio"`
 	Document            string                     `json:"document"`
-	ParseMode           *string                    `json:"parse_mode"`
-	ReplyMarkup         *models.ReplyMarkup        `json:"reply_markup"`
+	ParseMode           *string                    `json:"parse_mode,omitempty"`
+	ReplyMarkup         *models.ReplyMarkup        `json:"reply_markup,omitempty"`
 	Buttons             [][]map[string]interface{} `json:"buttons"`
 	ButtonType          string                     `json:"button_type"`
 	DisableNotification bool                       `json:"disable_notification"`
-	LinkPreviewOptions  *LinkPreviewOptions        `json:"link_preview_options"`
-	ReplyParameters     *ReplyParameters           `json:"reply_parameters"`
+	LinkPreviewOptions  *LinkPreviewOptions        `json:"link_preview_options,omitempty"`
+	ReplyParameters     *ReplyParameters           `json:"reply_parameters,omitempty"`
 }
 
 func (p *SendMessage) GetParams() map[string]interface{} {

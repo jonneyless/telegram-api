@@ -7,11 +7,11 @@ import (
 
 type SendDice struct {
 	ChatId              int64               `json:"chat_id"`
-	Emoji               *string             `json:"emoji"`
-	DisableNotification *bool               `json:"disable_notification"`
-	ProtectContent      *bool               `json:"protect_content"`
-	ReplyParameters     *ReplyParameters    `json:"reply_parameters"`
-	ReplyMarkup         *models.ReplyMarkup `json:"reply_markup"`
+	Emoji               *string             `json:"emoji,omitempty"`
+	DisableNotification *bool               `json:"disable_notification,omitempty"`
+	ProtectContent      *bool               `json:"protect_content,omitempty"`
+	ReplyParameters     *ReplyParameters    `json:"reply_parameters,omitempty"`
+	ReplyMarkup         *models.ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
 func (p *SendDice) GetParams() map[string]interface{} {

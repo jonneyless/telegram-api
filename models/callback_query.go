@@ -10,9 +10,9 @@ type CallbackQuery struct {
 	Id              string   `json:"id"`
 	From            From     `json:"from"`
 	Data            string   `json:"data"`
-	Message         *Message `json:"message"`
-	ChatInstance    *string  `json:"chat_instance_"`
-	InlineMessageId *string  `json:"inline_message_id"`
+	Message         *Message `json:"message,omitempty"`
+	ChatInstance    *string  `json:"chat_instance,omitempty"`
+	InlineMessageId *string  `json:"inline_message_id,omitempty"`
 }
 
 func (q *CallbackQuery) IsCallback(callback string) bool {

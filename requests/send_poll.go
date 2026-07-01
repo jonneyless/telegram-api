@@ -9,17 +9,17 @@ type SendPoll struct {
 	ChatId                int64               `json:"chat_id"`
 	Question              string              `json:"question"`
 	Options               []InputPollOption   `json:"options"`
-	Type                  *string             `json:"type"`
-	OpenPeriod            *int64              `json:"open_period"`
-	CloseDate             *int64              `json:"close_date"`
-	IsAnonymous           *bool               `json:"is_anonymous"`
-	IsClosed              *bool               `json:"is_closed"`
-	AllowsMultipleAnswers *bool               `json:"allows_multiple_answers"`
-	Explanation           *string             `json:"explanation"`
-	DisableNotification   *bool               `json:"disable_notification"`
-	ProtectContent        *bool               `json:"protect_content"`
-	ReplyParameters       *ReplyParameters    `json:"reply_parameters"`
-	ReplyMarkup           *models.ReplyMarkup `json:"reply_markup"`
+	Type                  *string             `json:"type,omitempty"`
+	OpenPeriod            *int64              `json:"open_period,omitempty"`
+	CloseDate             *int64              `json:"close_date,omitempty"`
+	IsAnonymous           *bool               `json:"is_anonymous,omitempty"`
+	IsClosed              *bool               `json:"is_closed,omitempty"`
+	AllowsMultipleAnswers *bool               `json:"allows_multiple_answers,omitempty"`
+	Explanation           *string             `json:"explanation,omitempty"`
+	DisableNotification   *bool               `json:"disable_notification,omitempty"`
+	ProtectContent        *bool               `json:"protect_content,omitempty"`
+	ReplyParameters       *ReplyParameters    `json:"reply_parameters,omitempty"`
+	ReplyMarkup           *models.ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
 func (p *SendPoll) GetParams() map[string]interface{} {

@@ -10,5 +10,5 @@ type Audio struct {
 	Duration     int64  `json:"duration"`
 	Performer    string `json:"performer"`
 	MimeType     string `json:"mime_type"`
-	Thumbnail    *Photo `json:"thumbnail"`
+	Thumbnail    *Photo `json:"thumbnail,omitempty"`
 }

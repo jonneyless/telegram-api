@@ -239,7 +239,7 @@ func (hc *httpClient) doRequestWithHeadersAndRetry(method, path string, queryPar
 		}
 
 		// 如果没有错误，处理响应
-		if err == nil && statusCode >= 200 && statusCode < 300 {
+		if err == nil && statusCode >= 200 && statusCode < 500 {
 			return hc.handleResponse(lastResp, result)
 		}
 

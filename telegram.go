@@ -1,6 +1,8 @@
 package telegram_api
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/jonneyless/telegram-api/models"
@@ -12,6 +14,7 @@ var telegram *Telegram
 type Telegram struct {
 	client  *httpClient
 	baseApi string
+	debug   bool
 }
 
 type MessageDeleteOptions struct {
@@ -27,7 +30,22 @@ func (t *Telegram) SetToken(token string) *Telegram {
 }
 
 func (t *Telegram) post(path string, params interface{}, result interface{}) error {
-	return t.client.post(path, params, result)
+	err := t.client.post(path, params, result)
+	if t.debug {
+		logger.Debug(fmt.Sprintf("Path: %v", path))
+		paramsJson, _ := json.MarshalIndent(params, "", "  ")
+		logger.Debug(fmt.Sprintf("Params: %s", string(paramsJson)))
+		if result != nil {
+			resultJson, _ := json.MarshalIndent(result, "", "  ")
+			logger.Debug(fmt.Sprintf("Result: %s", string(resultJson)))
+		} else {
+			logger.Debug("Result: nil")
+		}
+	}
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (t *Telegram) get(path string, params map[string]string, result interface{}) (interface{}, error) {
@@ -67,11 +85,11 @@ func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*M
 		}
 		if apiResponse != nil {
 			go func() {
+				messageIds = append(messageIds, apiResponse.Result.MessageID)
 				time.Sleep(time.Second * options.Delay)
 				_, _ = t.DeleteMessage(&requests.Message{
 					ChatId:     apiResponse.Result.Chat.ID,
-					MessageId:  apiResponse.Result.MessageID,
-					MessageIds: messageIds,
+					MessageIds: &messageIds,
 				})
 			}()
 		}
@@ -97,7 +115,7 @@ func (t *Telegram) DeleteMessage(params *requests.Message) (*models.ApiResponse,
 	var apiResponse *models.ApiResponse
 	var err error
 
-	if len(params.MessageIds) > 0 {
+	if params.MessageIds != nil {
 		err = t.post("deleteMessages", params, &apiResponse)
 	} else {
 		err = t.post("deleteMessage", params, &apiResponse)
@@ -212,7 +230,7 @@ func (t *Telegram) SetChatDescription(params *requests.ChatDescription) (*models
 func (t *Telegram) PinChatMessage(params *requests.Message) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
 
-	err := t.post("pinChatMessage", params.GetParams(), &apiResponse)
+	err := t.post("pinChatMessage", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
@@ -223,7 +241,7 @@ func (t *Telegram) PinChatMessage(params *requests.Message) (*models.ApiResponse
 func (t *Telegram) UnPinChatMessage(params *requests.Message) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
 
-	err := t.post("unpinChatMessage", params.GetParams(), &apiResponse)
+	err := t.post("unpinChatMessage", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
@@ -400,6 +418,7 @@ type TelegramApi struct {
 	BaseApi   string        `json:"base_api"`
 	Timeout   time.Duration `json:"timeout"`
 	UserAgent string        `json:"user_agent"`
+	Debug     bool          `json:"debug"`
 }
 
 func (params *TelegramApi) GetBaseApi() string {
@@ -432,6 +451,7 @@ func NewTelegramApi(params *TelegramApi) {
 			}),
 		),
 		baseApi: params.GetBaseApi(),
+		debug:   params.Debug,
 	}
 }
 

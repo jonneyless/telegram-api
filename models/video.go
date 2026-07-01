@@ -10,6 +10,6 @@ type Video struct {
 	Height       int64  `json:"height"`
 	Duration     int64  `json:"duration"`
 	MimeType     string `json:"mime_type"`
-	Thumbnail    *Photo `json:"thumbnail"`
-	Thumb        *Photo `json:"thumb"`
+	Thumbnail    *Photo `json:"thumbnail,omitempty"`
+	Thumb        *Photo `json:"thumb,omitempty"`
 }

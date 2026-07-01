@@ -3,43 +3,43 @@ package models
 type Member struct {
 	User        From    `json:"user"`
 	Status      string  `json:"status"`
-	CustomTitle *string `json:"custom_title"`
-	Tag         *string `json:"tag"`
-	UntilDate   *int64  `json:"until_date"`
+	CustomTitle *string `json:"custom_title,omitempty"`
+	Tag         *string `json:"tag,omitempty"`
+	UntilDate   *int64  `json:"until_date,omitempty"`
 	// status == administrator
-	CanBeEdited             *bool `json:"can_be_edited"`
-	CanManageChat           *bool `json:"can_manage_chat"`
-	CanDeleteMessages       *bool `json:"can_delete_messages"`
-	CanManageVideoChats     *bool `json:"can_manage_video_chats"`
-	CanRestrictMembers      *bool `json:"can_restrict_members"`
-	CanPromoteMembers       *bool `json:"can_promote_members"`
-	CanPostStories          *bool `json:"can_post_stories"`
-	CanEditStories          *bool `json:"can_edit_stories"`
-	CanDeleteStories        *bool `json:"can_delete_stories"`
-	CanPostMessages         *bool `json:"can_post_messages"`
-	CanEditMessages         *bool `json:"can_edit_messages"`
-	CanManageDirectMessages *bool `json:"can_manage_direct_messages"`
-	CanManageTags           *bool `json:"can_manage_tags"`
-	IsAnonymous             *bool `json:"is_anonymous"`
+	CanBeEdited             *bool `json:"can_be_edited,omitempty"`
+	CanManageChat           *bool `json:"can_manage_chat,omitempty"`
+	CanDeleteMessages       *bool `json:"can_delete_messages,omitempty"`
+	CanManageVideoChats     *bool `json:"can_manage_video_chats,omitempty"`
+	CanRestrictMembers      *bool `json:"can_restrict_members,omitempty"`
+	CanPromoteMembers       *bool `json:"can_promote_members,omitempty"`
+	CanPostStories          *bool `json:"can_post_stories,omitempty"`
+	CanEditStories          *bool `json:"can_edit_stories,omitempty"`
+	CanDeleteStories        *bool `json:"can_delete_stories,omitempty"`
+	CanPostMessages         *bool `json:"can_post_messages,omitempty"`
+	CanEditMessages         *bool `json:"can_edit_messages,omitempty"`
+	CanManageDirectMessages *bool `json:"can_manage_direct_messages,omitempty"`
+	CanManageTags           *bool `json:"can_manage_tags,omitempty"`
+	IsAnonymous             *bool `json:"is_anonymous,omitempty"`
 	// status == restricted
-	IsMember              *bool `json:"is_member"`
-	CanSendMessages       *bool `json:"can_send_messages"`
-	CanSendAudios         *bool `json:"can_send_audios"`
-	CanSendDocuments      *bool `json:"can_send_documents"`
-	CanSendPhotos         *bool `json:"can_send_photos"`
-	CanSendVideos         *bool `json:"can_send_videos"`
-	CanSendVideoNotes     *bool `json:"can_send_video_notes"`
-	CanSendVoiceNotes     *bool `json:"can_send_voice_notes"`
-	CanSendPolls          *bool `json:"can_send_polls"`
-	CanSendOtherMessages  *bool `json:"can_send_other_messages"`
-	CanAddWebPagePreviews *bool `json:"can_add_web_page_previews"`
-	CanReactToMessages    *bool `json:"can_react_to_messages"`
-	CanEditTag            *bool `json:"can_edit_tag"`
+	IsMember              *bool `json:"is_member,omitempty"`
+	CanSendMessages       *bool `json:"can_send_messages,omitempty"`
+	CanSendAudios         *bool `json:"can_send_audios,omitempty"`
+	CanSendDocuments      *bool `json:"can_send_documents,omitempty"`
+	CanSendPhotos         *bool `json:"can_send_photos,omitempty"`
+	CanSendVideos         *bool `json:"can_send_videos,omitempty"`
+	CanSendVideoNotes     *bool `json:"can_send_video_notes,omitempty"`
+	CanSendVoiceNotes     *bool `json:"can_send_voice_notes,omitempty"`
+	CanSendPolls          *bool `json:"can_send_polls,omitempty"`
+	CanSendOtherMessages  *bool `json:"can_send_other_messages,omitempty"`
+	CanAddWebPagePreviews *bool `json:"can_add_web_page_previews,omitempty"`
+	CanReactToMessages    *bool `json:"can_react_to_messages,omitempty"`
+	CanEditTag            *bool `json:"can_edit_tag,omitempty"`
 	// status == restricted or status == administrator
-	CanChangeInfo   *bool `json:"can_change_info"`
-	CanInviteUsers  *bool `json:"can_invite_users"`
-	CanPinMessages  *bool `json:"can_pin_messages"`
-	CanManageTopics *bool `json:"can_manage_topics"`
+	CanChangeInfo   *bool `json:"can_change_info,omitempty"`
+	CanInviteUsers  *bool `json:"can_invite_users,omitempty"`
+	CanPinMessages  *bool `json:"can_pin_messages,omitempty"`
+	CanManageTopics *bool `json:"can_manage_topics,omitempty"`
 }
 
 func (m *Member) IsOwner() bool {

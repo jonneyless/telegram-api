@@ -3,15 +3,15 @@ package models
 // ReceiveMessage struct
 type ReceiveMessage struct {
 	UpdateID        int64            `json:"update_id"`
-	Message         *Message         `json:"message"`
-	ChatMember      *ChatMember      `json:"chat_member"`
-	MyChatMember    *ChatMember      `json:"my_chat_member"`
-	EditedMessage   *EditedMessage   `json:"edited_message"`
-	CallbackQuery   *CallbackQuery   `json:"callback_query"`
-	ChatJoinRequest *ChatJoinRequest `json:"chat_join_request"`
-	ChannelPost     *ChannelPost     `json:"channel_post"`
-	Poll            *Poll            `json:"poll"`
-	PollAnswer      *PollAnswer      `json:"poll_answer"`
+	Message         *Message         `json:"message,omitempty"`
+	ChatMember      *ChatMember      `json:"chat_member,omitempty"`
+	MyChatMember    *ChatMember      `json:"my_chat_member,omitempty"`
+	EditedMessage   *EditedMessage   `json:"edited_message,omitempty"`
+	CallbackQuery   *CallbackQuery   `json:"callback_query,omitempty"`
+	ChatJoinRequest *ChatJoinRequest `json:"chat_join_request,omitempty"`
+	ChannelPost     *ChannelPost     `json:"channel_post,omitempty"`
+	Poll            *Poll            `json:"poll,omitempty"`
+	PollAnswer      *PollAnswer      `json:"poll_answer,omitempty"`
 }
 
 func (m *ReceiveMessage) IsMessage() bool {
