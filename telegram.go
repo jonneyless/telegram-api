@@ -1,10 +1,10 @@
 package telegram_api
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/bytedance/sonic"
 	"github.com/jonneyless/telegram-api/models"
 	"github.com/jonneyless/telegram-api/requests"
 )
@@ -33,10 +33,10 @@ func (t *Telegram) post(path string, params interface{}, result interface{}) err
 	err := t.client.post(path, params, result)
 	if t.debug {
 		logger.Debug(fmt.Sprintf("Path: %v", path))
-		paramsJson, _ := json.MarshalIndent(params, "", "  ")
+		paramsJson, _ := sonic.MarshalIndent(params, "", "  ")
 		logger.Debug(fmt.Sprintf("Params: %s", string(paramsJson)))
 		if result != nil {
-			resultJson, _ := json.MarshalIndent(result, "", "  ")
+			resultJson, _ := sonic.MarshalIndent(result, "", "  ")
 			logger.Debug(fmt.Sprintf("Result: %s", string(resultJson)))
 		} else {
 			logger.Debug("Result: nil")

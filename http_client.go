@@ -2,7 +2,6 @@ package telegram_api
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"math"
@@ -11,6 +10,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/bytedance/sonic"
 )
 
 // httpClient 封装 HTTP 客户端
@@ -309,7 +310,7 @@ func (hc *httpClient) doRequestSingle(method, path string, queryParams map[strin
 			contentType = "application/x-www-form-urlencoded"
 		default:
 			// 默认为 JSON
-			jsonData, err := json.Marshal(v)
+			jsonData, err := sonic.Marshal(v)
 			if err != nil {
 				return fmt.Errorf("序列化 JSON 失败: %w", err)
 			}
@@ -538,7 +539,7 @@ func (hc *httpClient) handleResponse(resp *http.Response, result interface{}) er
 
 	// 尝试解析为 JSON
 	if len(bodyBytes) > 0 {
-		if err := json.Unmarshal(bodyBytes, result); err != nil {
+		if err := sonic.Unmarshal(bodyBytes, result); err != nil {
 			return fmt.Errorf("解析 JSON 响应失败: %w, 响应内容: %s", err, string(bodyBytes))
 		}
 	}
