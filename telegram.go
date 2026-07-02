@@ -2,6 +2,8 @@ package telegram_api
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/bytedance/sonic"
@@ -14,6 +16,7 @@ var telegram *Telegram
 type Telegram struct {
 	client  *httpClient
 	baseApi string
+	botId   int64
 	debug   bool
 }
 
@@ -23,7 +26,18 @@ type MessageDeleteOptions struct {
 	MessageIds  []int64
 }
 
+func (t *Telegram) IsNewBot(botId int64) bool {
+	return t.botId != botId
+}
+
 func (t *Telegram) SetToken(token string) *Telegram {
+	parts := strings.Split(token, ":")
+	botId, err := strconv.ParseInt(parts[0], 10, 64)
+	if err != nil {
+		return t
+	}
+
+	t.botId = botId
 	t.client.setBaseUrl(t.baseApi + token + "/")
 
 	return t
