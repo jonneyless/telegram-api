@@ -2,8 +2,7 @@ package telegram_api
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
+	"sync"
 	"time"
 
 	"github.com/bytedance/sonic"
@@ -11,13 +10,21 @@ import (
 	"github.com/jonneyless/telegram-api/requests"
 )
 
-var telegram *Telegram
+// 单例模式
+var legacyTelegram *Telegram
+
+// 多实例模式
+var (
+	instances = make(map[int64]*Telegram)
+	mu        sync.RWMutex
+)
 
 type Telegram struct {
 	client  *httpClient
 	baseApi string
-	botId   int64
 	debug   bool
+	token   string
+	botID   int64
 }
 
 type MessageDeleteOptions struct {
@@ -26,21 +33,19 @@ type MessageDeleteOptions struct {
 	MessageIds  []int64
 }
 
-func (t *Telegram) IsNewBot(botId int64) bool {
-	return t.botId != botId
-}
-
 func (t *Telegram) SetToken(token string) *Telegram {
-	parts := strings.Split(token, ":")
-	botId, err := strconv.ParseInt(parts[0], 10, 64)
-	if err != nil {
-		return t
-	}
-
-	t.botId = botId
+	t.token = token
 	t.client.setBaseUrl(t.baseApi + token + "/")
 
 	return t
+}
+
+func (t *Telegram) GetBotID() int64 {
+	return t.botID
+}
+
+func (t *Telegram) GetToken() string {
+	return t.token
 }
 
 func (t *Telegram) post(path string, params interface{}, result interface{}) error {
@@ -435,6 +440,74 @@ type TelegramApi struct {
 	Debug     bool          `json:"debug"`
 }
 
+var defaultConfig = &TelegramApi{
+	BaseApi:   "https://api.telegram.org/bot",
+	Timeout:   30,
+	UserAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0",
+	Debug:     false,
+}
+
+// GetOrCreateTelegram 多实例获取方法
+func GetOrCreateTelegram(botID int64, token string, config ...*TelegramApi) *Telegram {
+	// 先尝试读取
+	mu.RLock()
+	if instance, exists := instances[botID]; exists {
+		mu.RUnlock()
+		return instance
+	}
+	mu.RUnlock()
+
+	// 不存在则创建（需要写锁）
+	mu.Lock()
+	defer mu.Unlock()
+
+	// 双重检查，防止在等待锁的过程中被其他协程创建
+	if instance, exists := instances[botID]; exists {
+		return instance
+	}
+
+	// 使用传入的配置或默认配置
+	cfg := defaultConfig
+	if len(config) > 0 && config[0] != nil {
+		cfg = config[0]
+	}
+
+	// 创建新实例
+	instance := &Telegram{
+		client: newHTTPClient(
+			"",
+			withTimeout(cfg.GetTimeout()),
+			withHeaders(map[string]string{
+				"User-Agent": cfg.GetUserAgent(),
+			}),
+		),
+		baseApi: cfg.GetBaseApi(),
+		debug:   cfg.Debug,
+		token:   token,
+		botID:   botID,
+	}
+
+	// 设置token
+	instance.SetToken(token)
+
+	// 存入实例池
+	instances[botID] = instance
+
+	return instance
+}
+
+// GetTelegram 多实例获取方法
+func GetTelegram(botID int64) *Telegram {
+	mu.RLock()
+	defer mu.RUnlock()
+
+	instance, exists := instances[botID]
+	if !exists {
+		return nil
+	}
+	return instance
+}
+
 func (params *TelegramApi) GetBaseApi() string {
 	if params.BaseApi == "" {
 		params.BaseApi = "https://api.telegram.org/bot"
@@ -455,20 +528,28 @@ func (params *TelegramApi) GetUserAgent() string {
 	return params.UserAgent
 }
 
-func NewTelegramApi(params *TelegramApi) {
-	telegram = &Telegram{
+// NewTelegramApi 单实例创建方法
+func NewTelegramApi(config ...*TelegramApi) {
+	// 使用传入的配置或默认配置
+	cfg := defaultConfig
+	if len(config) > 0 && config[0] != nil {
+		cfg = config[0]
+	}
+
+	legacyTelegram = &Telegram{
 		client: newHTTPClient(
 			"",
-			withTimeout(params.GetTimeout()),
+			withTimeout(cfg.GetTimeout()),
 			withHeaders(map[string]string{
-				"User-Agent": params.GetUserAgent(),
+				"User-Agent": cfg.GetUserAgent(),
 			}),
 		),
-		baseApi: params.GetBaseApi(),
-		debug:   params.Debug,
+		baseApi: cfg.GetBaseApi(),
+		debug:   cfg.Debug,
 	}
 }
 
+// GetTelegramApi 单实例获取方法
 func GetTelegramApi() *Telegram {
-	return telegram
+	return legacyTelegram
 }
