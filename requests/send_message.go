@@ -95,10 +95,10 @@ func (p *SendMessage) GetParams() map[string]interface{} {
 
 type LinkPreviewOptions struct {
 	IsDisabled bool    `json:"is_disabled"`
-	Url        *string `json:"url"`
+	Url        *string `json:"url,omitempty"`
 }
 
 type ReplyParameters struct {
 	MessageId int64  `json:"message_id"`
-	ChatId    *int64 `json:"chat_id"`
+	ChatId    *int64 `json:"chat_id,omitempty"`
 }
