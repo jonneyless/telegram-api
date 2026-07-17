@@ -11,6 +11,7 @@ type Member struct {
 	CanManageChat           *bool `json:"can_manage_chat,omitempty"`
 	CanDeleteMessages       *bool `json:"can_delete_messages,omitempty"`
 	CanManageVideoChats     *bool `json:"can_manage_video_chats,omitempty"`
+	CanManageVoiceChats     *bool `json:"can_manage_voice_chats,omitempty"`
 	CanRestrictMembers      *bool `json:"can_restrict_members,omitempty"`
 	CanPromoteMembers       *bool `json:"can_promote_members,omitempty"`
 	CanPostStories          *bool `json:"can_post_stories,omitempty"`

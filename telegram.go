@@ -54,12 +54,15 @@ func (t *Telegram) GetToken() string {
 
 // post 发送POST请求
 func (t *Telegram) post(path string, params interface{}, result interface{}) error {
-	err := t.client.post(path, params, result)
-
 	if t.debug {
 		logger.Debug(fmt.Sprintf("Path: %v", path))
 		paramsJson, _ := sonic.MarshalIndent(params, "", "  ")
 		logger.Debug(fmt.Sprintf("Params: %s", string(paramsJson)))
+	}
+
+	err := t.client.post(path, params, result)
+
+	if t.debug {
 		if result != nil {
 			resultJson, _ := sonic.MarshalIndent(result, "", "  ")
 			logger.Debug(fmt.Sprintf("Result: %s", string(resultJson)))
