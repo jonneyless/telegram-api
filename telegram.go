@@ -2,6 +2,10 @@ package telegram_api
 
 import (
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -23,6 +27,10 @@ type Telegram struct {
 	client *resty.Client // HTTP客户端
 	debug  bool          // 是否开启调试模式
 	token  string        // Bot Token
+}
+
+func (t *Telegram) GetToken() string {
+	return t.token
 }
 
 // MessageDeleteOptions 消息删除选项
@@ -162,8 +170,18 @@ func (t *Telegram) AnswerCallbackQuery(params *requests.AnswerCallbackQuery) (*m
 	return apiResponse, err
 }
 
-// GetChat 获取聊天信息
+// GetChat 获取群组信息
 func (t *Telegram) GetChat(params *requests.Chat) (*models.ChatResponse, error) {
+	var apiResponse *models.ChatResponse
+	err := t.post("getChat", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+	return apiResponse, err
+}
+
+// GetChat 获取群组信息
+func (t *Telegram) GetUser(params *requests.Chat) (*models.ChatResponse, error) {
 	var apiResponse *models.ChatResponse
 	err := t.post("getChat", params, &apiResponse)
 	if err != nil {
@@ -392,6 +410,44 @@ func (t *Telegram) GetFile(params *requests.File) (*models.FileResponse, error) 
 	return apiResponse, err
 }
 
+// Download 获取文件信息
+func (t *Telegram) Download(params *requests.FilePath) ([]byte, error) {
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+
+	if strings.Contains(t.client.BaseURL, "127.0.0.1") {
+		data, err := os.ReadFile(params.FilePath)
+		if err == nil {
+			return data, nil
+		}
+	}
+
+	baseUrl := strings.Replace(t.client.BaseURL, "/bot", "/file/bot", 1)
+	fileUrl := fmt.Sprintf("%s/%s", baseUrl, params.FilePath)
+	resp, err := client.Get(fileUrl)
+	if err != nil {
+		return nil, fmt.Errorf("failed to download image: %w", err)
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("download failed with status: %s, url: %s", resp.Status, fileUrl)
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read image data: %w", err)
+	}
+
+	return data, nil
+}
+
 // Config Telegram API 配置
 type Config struct {
 	BaseApi   string        `json:"base_api"`   // API基础地址
@@ -435,7 +491,7 @@ func NewTelegram(botID int64, token string, config ...*Config) *Telegram {
 
 	// 创建 Resty 客户端（带钩子）
 	restyClient := newRestyClient(cfg)
-	restyClient.SetBaseURL(fmt.Sprintf("%s%s/", cfg.GetBaseApi(), token))
+	restyClient.SetBaseURL(fmt.Sprintf("%s%s", cfg.GetBaseApi(), token))
 
 	// 创建新实例
 	i := &Telegram{
@@ -493,7 +549,7 @@ func NewTelegramApi(token string, config ...*Config) {
 		}
 
 		restyClient := newRestyClient(cfg)
-		restyClient.SetBaseURL(fmt.Sprintf("%s%s/", cfg.GetBaseApi(), token))
+		restyClient.SetBaseURL(fmt.Sprintf("%s%s", cfg.GetBaseApi(), token))
 
 		instance = &Telegram{
 			client: restyClient,

@@ -8,3 +8,10 @@ type Photo struct {
 	Width        int64  `json:"width"`
 	Height       int64  `json:"height"`
 }
+
+type Avatar struct {
+	BigFileID         string `json:"big_file_id"`
+	BigFileUniqueID   string `json:"big_file_unique_id"`
+	SmallFileID       string `json:"small_file_id"`
+	SmallFileUniqueID string `json:"small_file_unique_id"`
+}

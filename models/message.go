@@ -216,3 +216,87 @@ func (m *Message) ChatId() int64 {
 func (m *Message) FromId() int64 {
 	return m.From.ID
 }
+
+func (m *Message) TextString() string {
+	if m.Text != nil {
+		return *m.Text
+	}
+
+	if m.Caption != nil {
+		return *m.Caption
+	}
+
+	return ""
+}
+
+type FileInfo struct {
+	Type         string  `json:"type"`
+	FileId       string  `json:"file_id"`
+	FileUniqueId string  `json:"file_unique_id"`
+	FileSize     int64   `json:"file_size"`
+	FileName     *string `json:"file_name"`
+	Width        *int64  `json:"width"`
+	Height       *int64  `json:"height"`
+	MimeType     *string `json:"mime_type"`
+	Duration     *int64  `json:"duration"`
+}
+
+func (m *Message) FileInfo() *FileInfo {
+	info := &FileInfo{}
+
+	if m.IsPhoto() {
+		info.Type = "photo"
+		for _, photo := range *m.Photo {
+			if info.FileSize < photo.FileSize {
+				info.FileId = photo.FileID
+				info.FileUniqueId = photo.FileUniqueID
+				info.FileSize = photo.FileSize
+				info.Width = &photo.Width
+				info.Height = &photo.Height
+			}
+		}
+	} else if m.IsVideo() {
+		info.Type = "video"
+		info.FileId = m.Video.FileID
+		info.FileUniqueId = m.Video.FileUniqueID
+		info.FileSize = m.Video.FileSize
+		info.Width = &m.Video.Width
+		info.Height = &m.Video.Height
+		info.FileName = &m.Video.FileName
+		info.Duration = &m.Video.Duration
+		info.MimeType = &m.Video.MimeType
+	} else if m.IsAudio() {
+		info.Type = "audio"
+		info.FileId = m.Audio.FileID
+		info.FileUniqueId = m.Audio.FileUniqueID
+		info.FileSize = m.Audio.FileSize
+		info.FileName = &m.Audio.FileName
+		info.Duration = &m.Audio.Duration
+		info.MimeType = &m.Audio.MimeType
+	} else if m.IsSticker() {
+		info.Type = "sticker"
+		info.FileId = m.Sticker.FileID
+		info.FileUniqueId = m.Sticker.FileUniqueID
+		info.FileSize = m.Sticker.FileSize
+		info.Width = &m.Sticker.Width
+		info.Height = &m.Sticker.Height
+	} else if m.IsDocument() {
+		info.Type = "document"
+		info.FileId = m.Document.FileID
+		info.FileUniqueId = m.Document.FileUniqueID
+		info.FileSize = m.Document.FileSize
+		info.FileName = &m.Document.FileName
+		info.MimeType = &m.Document.MimeType
+	} else if m.IsVoice() {
+		info.Type = "voice"
+		info.FileId = m.Voice.FileID
+		info.FileUniqueId = m.Voice.FileUniqueID
+		info.FileSize = m.Voice.FileSize
+		info.Duration = &m.Voice.Duration
+		info.MimeType = &m.Voice.MimeType
+	} else {
+		return nil
+	}
+
+	return info
+}

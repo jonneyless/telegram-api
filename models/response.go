@@ -31,8 +31,8 @@ type ChatInviteLinkResponse struct {
 
 // ChatResponse struct
 type ChatResponse struct {
-	Ok     bool `json:"ok"`
-	Result Chat `json:"result"`
+	Ok     bool     `json:"ok"`
+	Result ChatFull `json:"result"`
 }
 
 // ChatMemberCountResponse struct
