@@ -6,28 +6,28 @@ import (
 )
 
 type SendMessage struct {
-	ChatId              int64                      `json:"chat_id"`
-	Text                string                     `json:"text"`
-	Photo               string                     `json:"photo"`
-	Video               string                     `json:"video"`
-	Audio               string                     `json:"audio"`
-	Document            string                     `json:"document"`
-	ParseMode           *string                    `json:"parse_mode,omitempty"`
-	ReplyMarkup         *models.ReplyMarkup        `json:"reply_markup,omitempty"`
-	Buttons             [][]map[string]interface{} `json:"buttons"`
-	ButtonType          string                     `json:"button_type"`
-	DisableNotification bool                       `json:"disable_notification"`
-	LinkPreviewOptions  *LinkPreviewOptions        `json:"link_preview_options,omitempty"`
-	ReplyParameters     *ReplyParameters           `json:"reply_parameters,omitempty"`
+	ChatId              int64               `json:"chat_id"`
+	Text                string              `json:"text"`
+	Photo               string              `json:"photo"`
+	Video               string              `json:"video"`
+	Audio               string              `json:"audio"`
+	Document            string              `json:"document"`
+	ParseMode           *string             `json:"parse_mode,omitempty"`
+	ReplyMarkup         *models.ReplyMarkup `json:"reply_markup,omitempty"`
+	Buttons             [][]map[string]any  `json:"buttons"`
+	ButtonType          string              `json:"button_type"`
+	DisableNotification bool                `json:"disable_notification"`
+	LinkPreviewOptions  *LinkPreviewOptions `json:"link_preview_options,omitempty"`
+	ReplyParameters     *ReplyParameters    `json:"reply_parameters,omitempty"`
 }
 
-func (p *SendMessage) GetParams() map[string]interface{} {
+func (p *SendMessage) GetParams() map[string]any {
 	parseMode := "html"
 	if p.ParseMode != nil {
 		parseMode = *p.ParseMode
 	}
 
-	params := map[string]interface{}{
+	params := map[string]any{
 		"chat_id":              p.ChatId,
 		"text":                 p.Text,
 		"parse_mode":           parseMode,
@@ -35,7 +35,7 @@ func (p *SendMessage) GetParams() map[string]interface{} {
 	}
 
 	if p.Photo != "" || p.Video != "" || p.Audio != "" || p.Document != "" {
-		params = map[string]interface{}{
+		params = map[string]any{
 			"chat_id":              p.ChatId,
 			"caption":              p.Text,
 			"parse_mode":           parseMode,
@@ -57,19 +57,19 @@ func (p *SendMessage) GetParams() map[string]interface{} {
 		params["reply_markup"] = utils.Struct2Map(p.ReplyMarkup)
 	} else if len(p.Buttons) > 0 {
 		if p.ButtonType == "keyboard" {
-			params["reply_markup"] = map[string]interface{}{
+			params["reply_markup"] = map[string]any{
 				"keyboard":        p.Buttons,
 				"resize_keyboard": true,
 			}
 		} else {
-			params["reply_markup"] = map[string]interface{}{
+			params["reply_markup"] = map[string]any{
 				"inline_keyboard": p.Buttons,
 			}
 		}
 	}
 
 	if p.LinkPreviewOptions != nil {
-		linkPreviewOptions := map[string]interface{}{
+		linkPreviewOptions := map[string]any{
 			"is_disabled": p.LinkPreviewOptions.IsDisabled,
 		}
 		if p.LinkPreviewOptions.Url != nil {
@@ -80,7 +80,7 @@ func (p *SendMessage) GetParams() map[string]interface{} {
 	}
 
 	if p.ReplyParameters != nil {
-		replyParameters := map[string]interface{}{
+		replyParameters := map[string]any{
 			"message_id": p.ReplyParameters.MessageId,
 		}
 		if p.ReplyParameters.ChatId != nil {

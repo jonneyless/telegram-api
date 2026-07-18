@@ -14,8 +14,8 @@ type SendDice struct {
 	ReplyMarkup         *models.ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-func (p *SendDice) GetParams() map[string]interface{} {
-	params := map[string]interface{}{
+func (p *SendDice) GetParams() map[string]any {
+	params := map[string]any{
 		"chat_id":              p.ChatId,
 		"emoji":                "🎲",
 		"disable_notification": p.DisableNotification,
@@ -31,7 +31,7 @@ func (p *SendDice) GetParams() map[string]interface{} {
 	}
 
 	if p.ReplyParameters != nil {
-		replyParameters := map[string]interface{}{
+		replyParameters := map[string]any{
 			"message_id": p.ReplyParameters.MessageId,
 		}
 		if p.ReplyParameters.ChatId != nil {

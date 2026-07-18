@@ -8,8 +8,8 @@ type AnswerCallbackQuery struct {
 	CacheTime       *int64  `json:"cache_time,omitempty"`
 }
 
-func (p *AnswerCallbackQuery) GetParams() map[string]interface{} {
-	params := map[string]interface{}{
+func (p *AnswerCallbackQuery) GetParams() map[string]any {
+	params := map[string]any{
 		"callback_query_id": p.CallbackQueryId,
 		"text":              p.Text,
 		"show_alert":        p.ShowAlert,

@@ -15,15 +15,14 @@ var (
 	instances = make(map[int64]*Telegram)
 	instance  *Telegram
 	mu        sync.RWMutex
+	once      sync.Once
 )
 
 // Telegram Telegram API 客户端
 type Telegram struct {
-	client  *resty.Client // HTTP客户端
-	baseApi string        // API基础地址
-	debug   bool          // 是否开启调试模式
-	token   string        // Bot Token
-	botID   int64         // Bot ID
+	client *resty.Client // HTTP客户端
+	debug  bool          // 是否开启调试模式
+	token  string        // Bot Token
 }
 
 // MessageDeleteOptions 消息删除选项
@@ -33,24 +32,7 @@ type MessageDeleteOptions struct {
 	MessageIds  []int64       // 要删除的消息ID列表
 }
 
-// SetToken 设置Bot Token
-func (t *Telegram) SetToken(token string) *Telegram {
-	t.token = token
-	t.client.SetBaseURL(t.baseApi + token + "/")
-	return t
-}
-
-// GetBotID 获取Bot ID
-func (t *Telegram) GetBotID() int64 {
-	return t.botID
-}
-
-// GetToken 获取Bot Token
-func (t *Telegram) GetToken() string {
-	return t.token
-}
-
-func (t *Telegram) post(path string, params interface{}, result interface{}) error {
+func (t *Telegram) post(path string, params any, result any) error {
 	if t.token == "" {
 		return fmt.Errorf("bot token empty")
 	}
@@ -61,7 +43,7 @@ func (t *Telegram) post(path string, params interface{}, result interface{}) err
 	resp, err := t.client.R().
 		SetBody(params).
 		SetResult(result).
-		SetError(errResponse).
+		SetError(&errResponse).
 		Post(path)
 
 	if err != nil {
@@ -101,21 +83,22 @@ func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*M
 
 	if len(deleteOptions) > 0 && deleteOptions[0] != nil {
 		options := deleteOptions[0]
-		messageIds := options.MessageIds
+		messageIds := make([]int64, len(options.MessageIds))
+		copy(messageIds, options.MessageIds)
 		if options.DeleteReply && params.ReplyParameters != nil {
 			messageIds = append(messageIds, params.ReplyParameters.MessageId)
 		}
 		if apiResponse != nil {
+			chatId := apiResponse.Result.Chat.ID
+			messageIds = append(messageIds, apiResponse.Result.MessageID)
 			go func() {
-				messageIds = append(messageIds, apiResponse.Result.MessageID)
-				time.Sleep(time.Second * options.Delay)
+				time.Sleep(options.Delay)
 				_, _ = t.DeleteMessage(&requests.Message{
-					ChatId:     apiResponse.Result.Chat.ID,
+					ChatId:     chatId,
 					MessageIds: &messageIds,
 				})
 			}()
 		}
-		return apiResponse, nil
 	}
 
 	return apiResponse, nil
@@ -429,9 +412,9 @@ var defaultConfig = &Config{
 func NewTelegram(botID int64, token string, config ...*Config) *Telegram {
 	// 先尝试读取
 	mu.RLock()
-	if instance, exists := instances[botID]; exists {
+	if i, exists := instances[botID]; exists {
 		mu.RUnlock()
-		return instance
+		return i
 	}
 	mu.RUnlock()
 
@@ -440,8 +423,8 @@ func NewTelegram(botID int64, token string, config ...*Config) *Telegram {
 	defer mu.Unlock()
 
 	// 双重检查，防止在等待锁的过程中被其他协程创建
-	if instance, exists := instances[botID]; exists {
-		return instance
+	if i, exists := instances[botID]; exists {
+		return i
 	}
 
 	// 使用传入的配置或默认配置
@@ -451,24 +434,20 @@ func NewTelegram(botID int64, token string, config ...*Config) *Telegram {
 	}
 
 	// 创建 Resty 客户端（带钩子）
-	restyClient := setupRestyClient(cfg)
+	restyClient := newRestyClient(cfg)
+	restyClient.SetBaseURL(fmt.Sprintf("%s%s/", cfg.GetBaseApi(), token))
 
 	// 创建新实例
-	instance := &Telegram{
-		client:  restyClient,
-		baseApi: cfg.GetBaseApi(),
-		debug:   cfg.Debug,
-		token:   token,
-		botID:   botID,
+	i := &Telegram{
+		client: restyClient,
+		debug:  cfg.Debug,
+		token:  token,
 	}
 
-	// 设置token
-	instance.SetToken(token)
-
 	// 存入实例池
-	instances[botID] = instance
+	instances[botID] = i
 
-	return instance
+	return i
 }
 
 // GetTelegram 从实例池中获取指定机器人实例
@@ -486,7 +465,7 @@ func GetTelegram(botID int64) *Telegram {
 // GetBaseApi 获取API基础地址
 func (params *Config) GetBaseApi() string {
 	if params.BaseApi == "" {
-		params.BaseApi = "https://api.telegram.org/bot"
+		return defaultConfig.BaseApi
 	}
 	return params.BaseApi
 }
@@ -499,29 +478,36 @@ func (params *Config) GetTimeout() time.Duration {
 // GetUserAgent 获取User-Agent
 func (params *Config) GetUserAgent() string {
 	if params.UserAgent == "" {
-		params.UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0"
+		return defaultConfig.UserAgent
 	}
 	return params.UserAgent
 }
 
 // NewTelegramApi 单实例模式
-func NewTelegramApi(config ...*Config) {
-	// 使用传入的配置或默认配置
-	cfg := defaultConfig
-	if len(config) > 0 && config[0] != nil {
-		cfg = config[0]
-	}
+func NewTelegramApi(token string, config ...*Config) {
+	once.Do(func() {
+		// 使用传入的配置或默认配置
+		cfg := defaultConfig
+		if len(config) > 0 && config[0] != nil {
+			cfg = config[0]
+		}
 
-	restyClient := setupRestyClient(cfg)
+		restyClient := newRestyClient(cfg)
+		restyClient.SetBaseURL(fmt.Sprintf("%s%s/", cfg.GetBaseApi(), token))
 
-	instance = &Telegram{
-		client:  restyClient,
-		baseApi: cfg.GetBaseApi(),
-		debug:   cfg.Debug,
-	}
+		instance = &Telegram{
+			client: restyClient,
+			debug:  cfg.Debug,
+			token:  token,
+		}
+	})
 }
 
 // GetTelegramApi 获取单实例
 func GetTelegramApi() *Telegram {
+	if instance == nil {
+		panic("telegram instance is nil")
+	}
+
 	return instance
 }

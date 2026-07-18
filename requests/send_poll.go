@@ -22,8 +22,8 @@ type SendPoll struct {
 	ReplyMarkup           *models.ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-func (p *SendPoll) GetParams() map[string]interface{} {
-	params := map[string]interface{}{
+func (p *SendPoll) GetParams() map[string]any {
+	params := map[string]any{
 		"chat_id":                 p.ChatId,
 		"question":                p.Question,
 		"question_parse_mode":     "html",
@@ -47,7 +47,7 @@ func (p *SendPoll) GetParams() map[string]interface{} {
 		params["explanation"] = p.Explanation
 	}
 
-	options := make([]map[string]interface{}, 0)
+	options := make([]map[string]any, 0)
 	for _, option := range p.Options {
 		item := utils.Struct2Map(option)
 		options = append(options, item)

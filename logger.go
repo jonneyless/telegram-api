@@ -21,14 +21,14 @@ func GetLogger() Logger {
 
 // Logger 日志接口
 type Logger interface {
-	Debug(args ...interface{})
-	Debugf(format string, args ...interface{})
-	Info(args ...interface{})
-	Infof(format string, args ...interface{})
-	Warn(args ...interface{})
-	Warnf(format string, args ...interface{})
-	Error(args ...interface{})
-	Errorf(format string, args ...interface{})
+	Debug(args ...any)
+	Debugf(format string, args ...any)
+	Info(args ...any)
+	Infof(format string, args ...any)
+	Warn(args ...any)
+	Warnf(format string, args ...any)
+	Error(args ...any)
+	Errorf(format string, args ...any)
 }
 
 // defaultLogger 默认日志实现
@@ -43,34 +43,34 @@ func NewDefaultLogger() Logger {
 	}
 }
 
-func (l *defaultLogger) Debug(args ...interface{}) {
-	l.logger.Println(append([]interface{}{"[DEBUG]"}, args...)...)
+func (l *defaultLogger) Debug(args ...any) {
+	l.logger.Println(append([]any{"[DEBUG]"}, args...)...)
 }
 
-func (l *defaultLogger) Debugf(format string, args ...interface{}) {
+func (l *defaultLogger) Debugf(format string, args ...any) {
 	l.logger.Printf("[DEBUG] "+format, args...)
 }
 
-func (l *defaultLogger) Info(args ...interface{}) {
-	l.logger.Println(append([]interface{}{"[INFO]"}, args...)...)
+func (l *defaultLogger) Info(args ...any) {
+	l.logger.Println(append([]any{"[INFO]"}, args...)...)
 }
 
-func (l *defaultLogger) Infof(format string, args ...interface{}) {
+func (l *defaultLogger) Infof(format string, args ...any) {
 	l.logger.Printf("[INFO] "+format, args...)
 }
 
-func (l *defaultLogger) Warn(args ...interface{}) {
-	l.logger.Println(append([]interface{}{"[WARN]"}, args...)...)
+func (l *defaultLogger) Warn(args ...any) {
+	l.logger.Println(append([]any{"[WARN]"}, args...)...)
 }
 
-func (l *defaultLogger) Warnf(format string, args ...interface{}) {
+func (l *defaultLogger) Warnf(format string, args ...any) {
 	l.logger.Printf("[WARN] "+format, args...)
 }
 
-func (l *defaultLogger) Error(args ...interface{}) {
-	l.logger.Println(append([]interface{}{"[ERROR]"}, args...)...)
+func (l *defaultLogger) Error(args ...any) {
+	l.logger.Println(append([]any{"[ERROR]"}, args...)...)
 }
 
-func (l *defaultLogger) Errorf(format string, args ...interface{}) {
+func (l *defaultLogger) Errorf(format string, args ...any) {
 	l.logger.Printf("[ERROR] "+format, args...)
 }

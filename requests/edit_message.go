@@ -6,22 +6,22 @@ import (
 )
 
 type EditMessage struct {
-	ChatId             int64                      `json:"chat_id"`
-	MessageId          int64                      `json:"message_id"`
-	Text               string                     `json:"text"`
-	ParseMode          *string                    `json:"parse_mode,omitempty"`
-	Buttons            [][]map[string]interface{} `json:"buttons"`
-	ReplyMarkup        *models.ReplyMarkup        `json:"reply_markup,omitempty"`
-	LinkPreviewOptions *LinkPreviewOptions        `json:"link_preview_options,omitempty"`
+	ChatId             int64               `json:"chat_id"`
+	MessageId          int64               `json:"message_id"`
+	Text               string              `json:"text"`
+	ParseMode          *string             `json:"parse_mode,omitempty"`
+	Buttons            [][]map[string]any  `json:"buttons"`
+	ReplyMarkup        *models.ReplyMarkup `json:"reply_markup,omitempty"`
+	LinkPreviewOptions *LinkPreviewOptions `json:"link_preview_options,omitempty"`
 }
 
-func (p *EditMessage) GetParams() map[string]interface{} {
+func (p *EditMessage) GetParams() map[string]any {
 	parseMode := "html"
 	if p.ParseMode != nil {
 		parseMode = *p.ParseMode
 	}
 
-	params := map[string]interface{}{
+	params := map[string]any{
 		"chat_id":    p.ChatId,
 		"message_id": p.MessageId,
 		"text":       p.Text,
@@ -31,13 +31,13 @@ func (p *EditMessage) GetParams() map[string]interface{} {
 	if p.ReplyMarkup != nil {
 		params["reply_markup"] = utils.Struct2Map(p.ReplyMarkup)
 	} else if len(p.Buttons) > 0 {
-		params["reply_markup"] = map[string]interface{}{
+		params["reply_markup"] = map[string]any{
 			"inline_keyboard": p.Buttons,
 		}
 	}
 
 	if p.LinkPreviewOptions != nil {
-		linkPreviewOptions := map[string]interface{}{
+		linkPreviewOptions := map[string]any{
 			"is_disabled": p.LinkPreviewOptions.IsDisabled,
 		}
 		if p.LinkPreviewOptions.Url != nil {

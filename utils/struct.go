@@ -4,8 +4,8 @@ import (
 	"reflect"
 )
 
-func Struct2Map(obj interface{}) map[string]interface{} {
-	result := make(map[string]interface{})
+func Struct2Map(obj any) map[string]any {
+	result := make(map[string]any)
 
 	v := reflect.ValueOf(obj)
 	t := reflect.TypeOf(obj)
