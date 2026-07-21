@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -26,7 +27,12 @@ var (
 type Telegram struct {
 	client *resty.Client // HTTP客户端
 	debug  bool          // 是否开启调试模式
+	botId  int64         // Bot ID
 	token  string        // Bot Token
+}
+
+func (t *Telegram) GetBotId() int64 {
+	return t.botId
 }
 
 func (t *Telegram) GetToken() string {
@@ -172,16 +178,6 @@ func (t *Telegram) AnswerCallbackQuery(params *requests.AnswerCallbackQuery) (*m
 
 // GetChat 获取群组信息
 func (t *Telegram) GetChat(params *requests.Chat) (*models.ChatResponse, error) {
-	var apiResponse *models.ChatResponse
-	err := t.post("getChat", params, &apiResponse)
-	if err != nil {
-		return nil, err
-	}
-	return apiResponse, err
-}
-
-// GetChat 获取群组信息
-func (t *Telegram) GetUser(params *requests.Chat) (*models.ChatResponse, error) {
 	var apiResponse *models.ChatResponse
 	err := t.post("getChat", params, &apiResponse)
 	if err != nil {
@@ -465,10 +461,10 @@ var defaultConfig = &Config{
 }
 
 // NewTelegram 多机器人实例模式创建
-func NewTelegram(botID int64, token string, config ...*Config) *Telegram {
+func NewTelegram(botId int64, token string, config ...*Config) *Telegram {
 	// 先尝试读取
 	mu.RLock()
-	if i, exists := instances[botID]; exists {
+	if i, exists := instances[botId]; exists {
 		mu.RUnlock()
 		return i
 	}
@@ -479,7 +475,7 @@ func NewTelegram(botID int64, token string, config ...*Config) *Telegram {
 	defer mu.Unlock()
 
 	// 双重检查，防止在等待锁的过程中被其他协程创建
-	if i, exists := instances[botID]; exists {
+	if i, exists := instances[botId]; exists {
 		return i
 	}
 
@@ -497,11 +493,12 @@ func NewTelegram(botID int64, token string, config ...*Config) *Telegram {
 	i := &Telegram{
 		client: restyClient,
 		debug:  cfg.Debug,
+		botId:  botId,
 		token:  token,
 	}
 
 	// 存入实例池
-	instances[botID] = i
+	instances[botId] = i
 
 	return i
 }
@@ -551,9 +548,13 @@ func NewTelegramApi(token string, config ...*Config) {
 		restyClient := newRestyClient(cfg)
 		restyClient.SetBaseURL(fmt.Sprintf("%s%s", cfg.GetBaseApi(), token))
 
+		botInfo := strings.Split(token, ":")
+		botId, _ := strconv.ParseInt(botInfo[0], 10, 64)
+
 		instance = &Telegram{
 			client: restyClient,
 			debug:  cfg.Debug,
+			botId:  botId,
 			token:  token,
 		}
 	})
