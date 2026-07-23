@@ -2,6 +2,6 @@ package requests
 
 // Member struct
 type Member struct {
-	Chat
+	ChatId any   `json:"chat_id"`
 	UserId int64 `json:"user_id"`
 }
