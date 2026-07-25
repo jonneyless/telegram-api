@@ -1,6 +1,7 @@
 package telegram_api
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -56,6 +57,35 @@ func (t *Telegram) post(path string, params any, result any) error {
 	// 使用 Resty 发送 POST 请求
 	resp, err := t.client.R().
 		SetBody(params).
+		SetResult(result).
+		SetError(&errResponse).
+		Post(path)
+
+	if err != nil {
+		return err
+	}
+
+	// 检查 HTTP 状态码
+	if resp.StatusCode() >= 400 {
+		if !errResponse.Ok {
+			return fmt.Errorf("telegram error: %s", errResponse.Description)
+		}
+		return fmt.Errorf("HTTP error: %d", resp.StatusCode())
+	}
+
+	return nil
+}
+
+func (t *Telegram) postMultipart(path string, body *bytes.Buffer, contentType string, result any) error {
+	if t.token == "" {
+		return fmt.Errorf("bot token empty")
+	}
+
+	var errResponse models.ApiErrorResponse
+
+	resp, err := t.client.R().
+		SetHeader("Content-Type", contentType).
+		SetBody(body.Bytes()).
 		SetResult(result).
 		SetError(&errResponse).
 		Post(path)
@@ -143,6 +173,20 @@ func (t *Telegram) DeleteMessage(params *requests.Message) (*models.ApiResponse,
 		return nil, err
 	}
 
+	return apiResponse, err
+}
+
+// SendPhoto 图片二进制发布
+func (t *Telegram) SendPhoto(params *requests.SendPhoto) (*models.MessageResponse, error) {
+	var apiResponse *models.MessageResponse
+	body, contentType, err := params.ToMultipart()
+	if err != nil {
+		return nil, err
+	}
+	err = t.postMultipart("sendPhoto", body, contentType, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
 	return apiResponse, err
 }
 
