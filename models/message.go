@@ -30,6 +30,7 @@ type Message struct {
 	NewChatMembers       *[]From         `json:"new_chat_members,omitempty"`
 	NewChatTitle         *string         `json:"new_chat_title,omitempty"`
 	NewChatPhoto         *[]Photo        `json:"new_chat_photo,omitempty"`
+	DeleteChatPhoto      *bool           `json:"delete_chat_photo,omitempty"`
 	Entities             *[]Entities     `json:"entities,omitempty"`
 	Photo                *[]Photo        `json:"photo,omitempty"`
 	Sticker              *Sticker        `json:"sticker,omitempty"`
@@ -161,7 +162,7 @@ func (m *Message) IsUpdateChatTitle() bool {
 
 // IsUpdateChatPhoto 更改群头像
 func (m *Message) IsUpdateChatPhoto() bool {
-	return m.NewChatPhoto != nil
+	return m.NewChatPhoto != nil || m.DeleteChatPhoto != nil
 }
 
 // IsPinnedMessage 消息置顶
