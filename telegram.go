@@ -243,7 +243,11 @@ func (t *Telegram) LeaveChat(params *requests.Chat) (*models.ApiResponse, error)
 // SetChatPhoto 设置群组头像
 func (t *Telegram) SetChatPhoto(params *requests.ChatPhoto) (*models.ApiResponse, error) {
 	var apiResponse *models.ApiResponse
-	err := t.post("setChatPhoto", params, &apiResponse)
+	body, contentType, err := params.ToMultipart()
+	if err != nil {
+		return nil, err
+	}
+	err = t.postMultipart("setChatPhoto", body, contentType, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
