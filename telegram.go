@@ -585,7 +585,7 @@ func (params *Config) GetUserAgent() string {
 }
 
 // NewTelegramApi 单实例模式
-func NewTelegramApi(token string, config ...*Config) {
+func NewTelegramApi(token string, config ...*Config) *Telegram {
 	once.Do(func() {
 		// 使用传入的配置或默认配置
 		cfg := defaultConfig
@@ -606,6 +606,8 @@ func NewTelegramApi(token string, config ...*Config) {
 			token:  token,
 		}
 	})
+
+	return instance
 }
 
 // GetTelegramApi 获取单实例
