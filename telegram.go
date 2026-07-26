@@ -57,7 +57,7 @@ func (t *Telegram) post(path string, params any, result any) error {
 	// 使用 Resty 发送 POST 请求
 	resp, err := t.client.R().
 		SetBody(params).
-		SetResult(result).
+		SetResult(&result).
 		SetError(&errResponse).
 		Post(path)
 
@@ -86,7 +86,7 @@ func (t *Telegram) postMultipart(path string, body *bytes.Buffer, contentType st
 	resp, err := t.client.R().
 		SetHeader("Content-Type", contentType).
 		SetBody(body.Bytes()).
-		SetResult(result).
+		SetResult(&result).
 		SetError(&errResponse).
 		Post(path)
 
