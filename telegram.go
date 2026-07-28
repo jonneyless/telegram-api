@@ -52,13 +52,11 @@ func (t *Telegram) post(path string, params any, result any) error {
 		return fmt.Errorf("bot token empty")
 	}
 
-	var errResponse models.ApiErrorResponse
-
 	// 使用 Resty 发送 POST 请求
 	resp, err := t.client.R().
 		SetBody(params).
 		SetResult(&result).
-		SetError(&errResponse).
+		SetError(&result).
 		Post(path)
 
 	if err != nil {
@@ -67,9 +65,6 @@ func (t *Telegram) post(path string, params any, result any) error {
 
 	// 检查 HTTP 状态码
 	if resp.StatusCode() >= 400 {
-		if !errResponse.Ok {
-			return fmt.Errorf("telegram error: %s", errResponse.Description)
-		}
 		return fmt.Errorf("HTTP error: %d", resp.StatusCode())
 	}
 
@@ -81,13 +76,10 @@ func (t *Telegram) postMultipart(path string, body *bytes.Buffer, contentType st
 		return fmt.Errorf("bot token empty")
 	}
 
-	var errResponse models.ApiErrorResponse
-
 	resp, err := t.client.R().
 		SetHeader("Content-Type", contentType).
 		SetBody(body.Bytes()).
 		SetResult(&result).
-		SetError(&errResponse).
 		Post(path)
 
 	if err != nil {
@@ -96,9 +88,6 @@ func (t *Telegram) postMultipart(path string, body *bytes.Buffer, contentType st
 
 	// 检查 HTTP 状态码
 	if resp.StatusCode() >= 400 {
-		if !errResponse.Ok {
-			return fmt.Errorf("telegram error: %s", errResponse.Description)
-		}
 		return fmt.Errorf("HTTP error: %d", resp.StatusCode())
 	}
 
@@ -106,8 +95,8 @@ func (t *Telegram) postMultipart(path string, body *bytes.Buffer, contentType st
 }
 
 // SendMessage 发送消息
-func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*MessageDeleteOptions) (*models.MessageResponse, error) {
-	var apiResponse *models.MessageResponse
+func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*MessageDeleteOptions) (*models.Message, error) {
+	var apiResponse *models.Response[models.Message]
 
 	apiPath := "sendMessage"
 	if params.Photo != "" {
@@ -123,6 +112,10 @@ func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*M
 	err := t.post(apiPath, params.GetParams(), &apiResponse)
 	if err != nil {
 		return nil, err
+	}
+
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
 	}
 
 	if len(deleteOptions) > 0 && deleteOptions[0] != nil {
@@ -145,22 +138,25 @@ func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*M
 		}
 	}
 
-	return apiResponse, nil
+	return apiResponse.Result, nil
 }
 
 // EditMessageText 编辑消息文本
-func (t *Telegram) EditMessageText(params *requests.EditMessage) (*models.MessageResponse, error) {
-	var apiResponse *models.MessageResponse
+func (t *Telegram) EditMessageText(params *requests.EditMessage) (*models.Message, error) {
+	var apiResponse *models.Response[models.Message]
 	err := t.post("editMessageText", params.GetParams(), &apiResponse)
 	if err != nil {
 		return nil, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Result, nil
 }
 
 // DeleteMessage 删除消息
-func (t *Telegram) DeleteMessage(params *requests.Message) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) DeleteMessage(params *requests.Message) (bool, error) {
+	var apiResponse *models.Response[string]
 	var err error
 
 	if params.MessageIds != nil {
@@ -170,15 +166,19 @@ func (t *Telegram) DeleteMessage(params *requests.Message) (*models.ApiResponse,
 	}
 
 	if err != nil {
-		return nil, err
+		return false, err
 	}
 
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+
+	return apiResponse.Ok, nil
 }
 
 // SendPhoto 图片二进制发布
-func (t *Telegram) SendPhoto(params *requests.SendPhoto) (*models.MessageResponse, error) {
-	var apiResponse *models.MessageResponse
+func (t *Telegram) SendPhoto(params *requests.SendPhoto) (*models.Message, error) {
+	var apiResponse *models.Response[models.Message]
 	body, contentType, err := params.ToMultipart()
 	if err != nil {
 		return nil, err
@@ -187,271 +187,354 @@ func (t *Telegram) SendPhoto(params *requests.SendPhoto) (*models.MessageRespons
 	if err != nil {
 		return nil, err
 	}
-	return apiResponse, err
+
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+
+	return apiResponse.Result, nil
 }
 
 // SendPoll 发送投票
-func (t *Telegram) SendPoll(params *requests.SendPoll) (*models.MessageResponse, error) {
-	var apiResponse *models.MessageResponse
+func (t *Telegram) SendPoll(params *requests.SendPoll) (*models.Message, error) {
+	var apiResponse *models.Response[models.Message]
 	err := t.post("sendPoll", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Result, nil
 }
 
 // SendDice 发送骰子
-func (t *Telegram) SendDice(params *requests.SendDice) (*models.MessageResponse, error) {
-	var apiResponse *models.MessageResponse
+func (t *Telegram) SendDice(params *requests.SendDice) (*models.Message, error) {
+	var apiResponse *models.Response[models.Message]
 	err := t.post("sendDice", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Result, nil
 }
 
 // AnswerCallbackQuery 回答回调查询
-func (t *Telegram) AnswerCallbackQuery(params *requests.AnswerCallbackQuery) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) AnswerCallbackQuery(params *requests.AnswerCallbackQuery) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("answerCallbackQuery", params.GetParams(), &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // GetChat 获取群组信息
-func (t *Telegram) GetChat(params *requests.Chat) (*models.ChatResponse, error) {
-	var apiResponse *models.ChatResponse
+func (t *Telegram) GetChat(params *requests.Chat) (*models.ChatFull, error) {
+	var apiResponse *models.Response[models.ChatFull]
 	err := t.post("getChat", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Result, nil
 }
 
 // LeaveChat 离开群组
-func (t *Telegram) LeaveChat(params *requests.Chat) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) LeaveChat(params *requests.Chat) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("leaveChat", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // SetChatPhoto 设置群组头像
-func (t *Telegram) SetChatPhoto(params *requests.ChatPhoto) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) SetChatPhoto(params *requests.ChatPhoto) (bool, error) {
+	var apiResponse *models.Response[string]
 	body, contentType, err := params.ToMultipart()
 	if err != nil {
-		return nil, err
+		return false, err
 	}
 	err = t.postMultipart("setChatPhoto", body, contentType, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // DeleteChatPhoto 删除群组头像
-func (t *Telegram) DeleteChatPhoto(params *requests.Chat) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) DeleteChatPhoto(params *requests.Chat) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("deleteChatPhoto", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // SetChatTitle 设置群组标题
-func (t *Telegram) SetChatTitle(params *requests.ChatTitle) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) SetChatTitle(params *requests.ChatTitle) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("setChatTitle", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // SetChatDescription 设置群组描述
-func (t *Telegram) SetChatDescription(params *requests.ChatDescription) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) SetChatDescription(params *requests.ChatDescription) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("setChatDescription", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // PinChatMessage 置顶消息
-func (t *Telegram) PinChatMessage(params *requests.Message) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) PinChatMessage(params *requests.Message) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("pinChatMessage", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // UnPinChatMessage 取消置顶消息
-func (t *Telegram) UnPinChatMessage(params *requests.Message) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) UnPinChatMessage(params *requests.Message) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("unpinChatMessage", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // UnPinAllChatMessage 取消所有置顶消息
-func (t *Telegram) UnPinAllChatMessage(params *requests.Chat) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) UnPinAllChatMessage(params *requests.Chat) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("unpinAllChatMessage", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // GetChatMember 获取群组成员信息
-func (t *Telegram) GetChatMember(params *requests.Member) (*models.ChatMemberResponse, error) {
-	var apiResponse *models.ChatMemberResponse
+func (t *Telegram) GetChatMember(params *requests.Member) (*models.Member, error) {
+	var apiResponse *models.Response[models.Member]
 	err := t.post("getChatMember", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Result, nil
 }
 
 // RestrictChatMember 限制群组成员
-func (t *Telegram) RestrictChatMember(params *requests.Restrict) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) RestrictChatMember(params *requests.Restrict) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("restrictChatMember", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // BanChatMember 封禁群组成员
-func (t *Telegram) BanChatMember(params *requests.Ban) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) BanChatMember(params *requests.Ban) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("banChatMember", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // UnBanChatMember 解封群组成员
-func (t *Telegram) UnBanChatMember(params *requests.UnBan) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) UnBanChatMember(params *requests.UnBan) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("unbanChatMember", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // PromoteChatMember 提升群组成员权限
-func (t *Telegram) PromoteChatMember(params *requests.Promote) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) PromoteChatMember(params *requests.Promote) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("promoteChatMember", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // SetChatPermissions 设置群组权限
-func (t *Telegram) SetChatPermissions(params *requests.SetChatPermissions) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) SetChatPermissions(params *requests.SetChatPermissions) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("setChatPermissions", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // SetChatAdministratorCustomTitle 设置管理员自定义头衔
-func (t *Telegram) SetChatAdministratorCustomTitle(params *requests.CustomTitle) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) SetChatAdministratorCustomTitle(params *requests.CustomTitle) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("setChatAdministratorCustomTitle", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // SetChatMemberTag 设置群组成员标签
-func (t *Telegram) SetChatMemberTag(params *requests.Tag) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) SetChatMemberTag(params *requests.Tag) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("setChatMemberTag", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // GetChatAdministrators 获取群组管理员列表
-func (t *Telegram) GetChatAdministrators(params *requests.Chat) (*models.ChatMembersResponse, error) {
-	var apiResponse *models.ChatMembersResponse
+func (t *Telegram) GetChatAdministrators(params *requests.Chat) (*[]models.Member, error) {
+	var apiResponse *models.Response[[]models.Member]
 	err := t.post("getChatAdministrators", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Result, nil
 }
 
 // GetChatMemberCount 获取群组成员数量
-func (t *Telegram) GetChatMemberCount(params *requests.Chat) (*models.ChatMemberCountResponse, error) {
-	var apiResponse *models.ChatMemberCountResponse
+func (t *Telegram) GetChatMemberCount(params *requests.Chat) (*int64, error) {
+	var apiResponse *models.Response[int64]
 	err := t.post("getChatMemberCount", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Result, nil
 }
 
 // CreateChatInviteLink 创建群组邀请链接
-func (t *Telegram) CreateChatInviteLink(params *requests.CreateChatInviteLink) (*models.ChatInviteLinkResponse, error) {
-	var apiResponse *models.ChatInviteLinkResponse
+func (t *Telegram) CreateChatInviteLink(params *requests.CreateChatInviteLink) (*models.InviteLink, error) {
+	var apiResponse *models.Response[models.InviteLink]
 	err := t.post("createChatInviteLink", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Result, nil
 }
 
 // ApproveChatJoinRequest 批准入群请求
-func (t *Telegram) ApproveChatJoinRequest(params *requests.Member) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) ApproveChatJoinRequest(params *requests.Member) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("approveChatJoinRequest", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // DeclineChatJoinRequest 拒绝入群请求
-func (t *Telegram) DeclineChatJoinRequest(params *requests.Member) (*models.ApiResponse, error) {
-	var apiResponse *models.ApiResponse
+func (t *Telegram) DeclineChatJoinRequest(params *requests.Member) (bool, error) {
+	var apiResponse *models.Response[string]
 	err := t.post("declineChatJoinRequest", params, &apiResponse)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return false, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Ok, nil
 }
 
 // GetFile 获取文件信息
-func (t *Telegram) GetFile(params *requests.File) (*models.FileResponse, error) {
-	var apiResponse *models.FileResponse
+func (t *Telegram) GetFile(params *requests.File) (*models.File, error) {
+	var apiResponse *models.Response[models.File]
 	err := t.post("getFile", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
-	return apiResponse, err
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Result, nil
 }
 
 // Download 获取文件信息

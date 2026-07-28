@@ -59,31 +59,22 @@ func (m *ReceiveMessage) Text() string {
 }
 
 func (m *ReceiveMessage) From() *From {
-	if m.IsMessage() {
+	switch {
+	case m.Message != nil:
 		return &m.Message.From
-	}
-
-	if m.IsEditedMessage() {
-		return &m.EditedMessage.From
-	}
-
-	if m.IsCallbackQuery() {
-		return &m.CallbackQuery.Message.From
-	}
-
-	if m.IsChatJoinRequest() {
-		return &m.ChatJoinRequest.From
-	}
-
-	if m.IsChatMember() {
+	case m.ChatMember != nil:
 		return &m.ChatMember.From
-	}
-
-	if m.IsMyChatMember() {
+	case m.MyChatMember != nil:
 		return &m.MyChatMember.From
+	case m.EditedMessage != nil:
+		return &m.EditedMessage.From
+	case m.CallbackQuery != nil:
+		return &m.CallbackQuery.Message.From
+	case m.ChatJoinRequest != nil:
+		return &m.ChatJoinRequest.From
+	default:
+		return nil
 	}
-
-	return nil
 }
 
 func (m *ReceiveMessage) FromId() int64 {
@@ -96,31 +87,22 @@ func (m *ReceiveMessage) FromId() int64 {
 }
 
 func (m *ReceiveMessage) Chat() *Chat {
-	if m.IsMessage() {
+	switch {
+	case m.Message != nil:
 		return &m.Message.Chat
-	}
-
-	if m.IsEditedMessage() {
-		return &m.EditedMessage.Chat
-	}
-
-	if m.IsCallbackQuery() {
-		return &m.CallbackQuery.Message.Chat
-	}
-
-	if m.IsChatJoinRequest() {
-		return &m.ChatJoinRequest.Chat
-	}
-
-	if m.IsChatMember() {
+	case m.ChatMember != nil:
 		return &m.ChatMember.Chat
-	}
-
-	if m.IsMyChatMember() {
+	case m.MyChatMember != nil:
 		return &m.MyChatMember.Chat
+	case m.EditedMessage != nil:
+		return &m.EditedMessage.Chat
+	case m.CallbackQuery != nil:
+		return &m.CallbackQuery.Message.Chat
+	case m.ChatJoinRequest != nil:
+		return &m.ChatJoinRequest.Chat
+	default:
+		return nil
 	}
-
-	return nil
 }
 
 func (m *ReceiveMessage) ChatId() int64 {
