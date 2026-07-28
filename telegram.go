@@ -156,7 +156,7 @@ func (t *Telegram) EditMessageText(params *requests.EditMessage) (*models.Messag
 
 // DeleteMessage 删除消息
 func (t *Telegram) DeleteMessage(params *requests.Message) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	var err error
 
 	if params.MessageIds != nil {
@@ -223,7 +223,7 @@ func (t *Telegram) SendDice(params *requests.SendDice) (*models.Message, error) 
 
 // AnswerCallbackQuery 回答回调查询
 func (t *Telegram) AnswerCallbackQuery(params *requests.AnswerCallbackQuery) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("answerCallbackQuery", params.GetParams(), &apiResponse)
 	if err != nil {
 		return false, err
@@ -249,7 +249,7 @@ func (t *Telegram) GetChat(params *requests.Chat) (*models.ChatFull, error) {
 
 // LeaveChat 离开群组
 func (t *Telegram) LeaveChat(params *requests.Chat) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("leaveChat", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -262,7 +262,7 @@ func (t *Telegram) LeaveChat(params *requests.Chat) (bool, error) {
 
 // SetChatPhoto 设置群组头像
 func (t *Telegram) SetChatPhoto(params *requests.ChatPhoto) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	body, contentType, err := params.ToMultipart()
 	if err != nil {
 		return false, err
@@ -279,7 +279,7 @@ func (t *Telegram) SetChatPhoto(params *requests.ChatPhoto) (bool, error) {
 
 // DeleteChatPhoto 删除群组头像
 func (t *Telegram) DeleteChatPhoto(params *requests.Chat) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("deleteChatPhoto", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -292,7 +292,7 @@ func (t *Telegram) DeleteChatPhoto(params *requests.Chat) (bool, error) {
 
 // SetChatTitle 设置群组标题
 func (t *Telegram) SetChatTitle(params *requests.ChatTitle) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("setChatTitle", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -305,7 +305,7 @@ func (t *Telegram) SetChatTitle(params *requests.ChatTitle) (bool, error) {
 
 // SetChatDescription 设置群组描述
 func (t *Telegram) SetChatDescription(params *requests.ChatDescription) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("setChatDescription", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -318,7 +318,7 @@ func (t *Telegram) SetChatDescription(params *requests.ChatDescription) (bool, e
 
 // PinChatMessage 置顶消息
 func (t *Telegram) PinChatMessage(params *requests.Message) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("pinChatMessage", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -331,7 +331,7 @@ func (t *Telegram) PinChatMessage(params *requests.Message) (bool, error) {
 
 // UnPinChatMessage 取消置顶消息
 func (t *Telegram) UnPinChatMessage(params *requests.Message) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("unpinChatMessage", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -344,7 +344,7 @@ func (t *Telegram) UnPinChatMessage(params *requests.Message) (bool, error) {
 
 // UnPinAllChatMessage 取消所有置顶消息
 func (t *Telegram) UnPinAllChatMessage(params *requests.Chat) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("unpinAllChatMessage", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -370,7 +370,7 @@ func (t *Telegram) GetChatMember(params *requests.Member) (*models.Member, error
 
 // RestrictChatMember 限制群组成员
 func (t *Telegram) RestrictChatMember(params *requests.Restrict) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("restrictChatMember", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -383,7 +383,7 @@ func (t *Telegram) RestrictChatMember(params *requests.Restrict) (bool, error) {
 
 // BanChatMember 封禁群组成员
 func (t *Telegram) BanChatMember(params *requests.Ban) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("banChatMember", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -396,7 +396,7 @@ func (t *Telegram) BanChatMember(params *requests.Ban) (bool, error) {
 
 // UnBanChatMember 解封群组成员
 func (t *Telegram) UnBanChatMember(params *requests.UnBan) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("unbanChatMember", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -409,7 +409,7 @@ func (t *Telegram) UnBanChatMember(params *requests.UnBan) (bool, error) {
 
 // PromoteChatMember 提升群组成员权限
 func (t *Telegram) PromoteChatMember(params *requests.Promote) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("promoteChatMember", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -422,7 +422,7 @@ func (t *Telegram) PromoteChatMember(params *requests.Promote) (bool, error) {
 
 // SetChatPermissions 设置群组权限
 func (t *Telegram) SetChatPermissions(params *requests.SetChatPermissions) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("setChatPermissions", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -435,7 +435,7 @@ func (t *Telegram) SetChatPermissions(params *requests.SetChatPermissions) (bool
 
 // SetChatAdministratorCustomTitle 设置管理员自定义头衔
 func (t *Telegram) SetChatAdministratorCustomTitle(params *requests.CustomTitle) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("setChatAdministratorCustomTitle", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -448,7 +448,7 @@ func (t *Telegram) SetChatAdministratorCustomTitle(params *requests.CustomTitle)
 
 // SetChatMemberTag 设置群组成员标签
 func (t *Telegram) SetChatMemberTag(params *requests.Tag) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("setChatMemberTag", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -500,7 +500,7 @@ func (t *Telegram) CreateChatInviteLink(params *requests.CreateChatInviteLink) (
 
 // ApproveChatJoinRequest 批准入群请求
 func (t *Telegram) ApproveChatJoinRequest(params *requests.Member) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("approveChatJoinRequest", params, &apiResponse)
 	if err != nil {
 		return false, err
@@ -513,7 +513,7 @@ func (t *Telegram) ApproveChatJoinRequest(params *requests.Member) (bool, error)
 
 // DeclineChatJoinRequest 拒绝入群请求
 func (t *Telegram) DeclineChatJoinRequest(params *requests.Member) (bool, error) {
-	var apiResponse *models.Response[string]
+	var apiResponse *models.Response[bool]
 	err := t.post("declineChatJoinRequest", params, &apiResponse)
 	if err != nil {
 		return false, err
