@@ -17,6 +17,8 @@ type ChatPermissions struct {
 	CanSendPolls          bool `json:"can_send_polls"`
 	CanSendOtherMessages  bool `json:"can_send_other_messages"`
 	CanAddWebPagePreviews bool `json:"can_add_web_page_previews"`
+	CanReactToMessages    bool `json:"can_react_to_messages"`
+	CanEditTag            bool `json:"can_edit_tag"`
 	CanChangeInfo         bool `json:"can_change_info"`
 	CanInviteUsers        bool `json:"can_invite_users"`
 	CanPinMessages        bool `json:"can_pin_messages"`
