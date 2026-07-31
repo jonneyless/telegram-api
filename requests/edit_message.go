@@ -8,8 +8,8 @@ import (
 type EditMessage struct {
 	ChatId             int64               `json:"chat_id"`
 	MessageId          int64               `json:"message_id"`
-	Text               string              `json:"text"`
-	ParseMode          *string             `json:"parse_mode,omitempty"`
+	Text               string              `json:"text,omitempty"`
+	ParseMode          string              `json:"parse_mode,omitempty"`
 	Buttons            [][]map[string]any  `json:"buttons"`
 	ReplyMarkup        *models.ReplyMarkup `json:"reply_markup,omitempty"`
 	LinkPreviewOptions *LinkPreviewOptions `json:"link_preview_options,omitempty"`
@@ -17,8 +17,8 @@ type EditMessage struct {
 
 func (p *EditMessage) GetParams() map[string]any {
 	parseMode := "html"
-	if p.ParseMode != nil {
-		parseMode = *p.ParseMode
+	if p.ParseMode != "" {
+		parseMode = p.ParseMode
 	}
 
 	params := map[string]any{
@@ -40,7 +40,7 @@ func (p *EditMessage) GetParams() map[string]any {
 		linkPreviewOptions := map[string]any{
 			"is_disabled": p.LinkPreviewOptions.IsDisabled,
 		}
-		if p.LinkPreviewOptions.Url != nil {
+		if p.LinkPreviewOptions.Url != "" {
 			linkPreviewOptions["url"] = p.LinkPreviewOptions.Url
 		}
 

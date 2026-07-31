@@ -132,7 +132,7 @@ func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*M
 				time.Sleep(options.Delay)
 				_, _ = t.DeleteMessage(&requests.Message{
 					ChatId:     chatId,
-					MessageIds: &messageIds,
+					MessageIds: messageIds,
 				})
 			}()
 		}
@@ -224,7 +224,7 @@ func (t *Telegram) SendDice(params *requests.SendDice) (*models.Message, error) 
 // AnswerCallbackQuery 回答回调查询
 func (t *Telegram) AnswerCallbackQuery(params *requests.AnswerCallbackQuery) (bool, error) {
 	var apiResponse *models.Response[bool]
-	err := t.post("answerCallbackQuery", params.GetParams(), &apiResponse)
+	err := t.post("answerCallbackQuery", params, &apiResponse)
 	if err != nil {
 		return false, err
 	}

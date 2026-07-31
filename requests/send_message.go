@@ -7,24 +7,24 @@ import (
 
 type SendMessage struct {
 	ChatId              int64               `json:"chat_id"`
-	Text                string              `json:"text"`
-	Photo               string              `json:"photo"`
-	Video               string              `json:"video"`
-	Audio               string              `json:"audio"`
-	Document            string              `json:"document"`
-	ParseMode           *string             `json:"parse_mode,omitempty"`
+	Text                string              `json:"text,omitempty"`
+	Photo               string              `json:"photo,omitempty"`
+	Video               string              `json:"video,omitempty"`
+	Audio               string              `json:"audio,omitempty"`
+	Document            string              `json:"document,omitempty"`
+	ParseMode           string              `json:"parse_mode,omitempty"`
 	ReplyMarkup         *models.ReplyMarkup `json:"reply_markup,omitempty"`
 	Buttons             [][]map[string]any  `json:"buttons"`
 	ButtonType          string              `json:"button_type"`
-	DisableNotification bool                `json:"disable_notification"`
+	DisableNotification bool                `json:"disable_notification,omitempty"`
 	LinkPreviewOptions  *LinkPreviewOptions `json:"link_preview_options,omitempty"`
 	ReplyParameters     *ReplyParameters    `json:"reply_parameters,omitempty"`
 }
 
 func (p *SendMessage) GetParams() map[string]any {
 	parseMode := "html"
-	if p.ParseMode != nil {
-		parseMode = *p.ParseMode
+	if p.ParseMode != "" {
+		parseMode = p.ParseMode
 	}
 
 	params := map[string]any{
@@ -72,7 +72,7 @@ func (p *SendMessage) GetParams() map[string]any {
 		linkPreviewOptions := map[string]any{
 			"is_disabled": p.LinkPreviewOptions.IsDisabled,
 		}
-		if p.LinkPreviewOptions.Url != nil {
+		if p.LinkPreviewOptions.Url != "" {
 			linkPreviewOptions["url"] = p.LinkPreviewOptions.Url
 		}
 
@@ -83,7 +83,7 @@ func (p *SendMessage) GetParams() map[string]any {
 		replyParameters := map[string]any{
 			"message_id": p.ReplyParameters.MessageId,
 		}
-		if p.ReplyParameters.ChatId != nil {
+		if p.ReplyParameters.ChatId != 0 {
 			replyParameters["chat_id"] = p.ReplyParameters.ChatId
 		}
 
@@ -94,11 +94,11 @@ func (p *SendMessage) GetParams() map[string]any {
 }
 
 type LinkPreviewOptions struct {
-	IsDisabled bool    `json:"is_disabled"`
-	Url        *string `json:"url,omitempty"`
+	IsDisabled bool   `json:"is_disabled"`
+	Url        string `json:"url,omitempty"`
 }
 
 type ReplyParameters struct {
-	MessageId int64  `json:"message_id"`
-	ChatId    *int64 `json:"chat_id,omitempty"`
+	MessageId int64 `json:"message_id"`
+	ChatId    int64 `json:"chat_id,omitempty"`
 }

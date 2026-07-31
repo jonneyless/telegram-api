@@ -34,7 +34,7 @@ func (p *SendDice) GetParams() map[string]any {
 		replyParameters := map[string]any{
 			"message_id": p.ReplyParameters.MessageId,
 		}
-		if p.ReplyParameters.ChatId != nil {
+		if p.ReplyParameters.ChatId != 0 {
 			replyParameters["chat_id"] = p.ReplyParameters.ChatId
 		}
 
