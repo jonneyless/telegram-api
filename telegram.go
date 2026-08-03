@@ -498,6 +498,19 @@ func (t *Telegram) CreateChatInviteLink(params *requests.CreateChatInviteLink) (
 	return apiResponse.Result, nil
 }
 
+// revokeChatInviteLink 撤销群组邀请链接
+func (t *Telegram) revokeChatInviteLink(params *requests.RevokeChatInviteLink) (*models.InviteLink, error) {
+	var apiResponse *models.Response[models.InviteLink]
+	err := t.post("createChatInviteLink", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Result, nil
+}
+
 // ApproveChatJoinRequest 批准入群请求
 func (t *Telegram) ApproveChatJoinRequest(params *requests.Member) (bool, error) {
 	var apiResponse *models.Response[bool]
