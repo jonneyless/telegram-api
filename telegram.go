@@ -498,8 +498,21 @@ func (t *Telegram) CreateChatInviteLink(params *requests.CreateChatInviteLink) (
 	return apiResponse.Result, nil
 }
 
-// revokeChatInviteLink 撤销群组邀请链接
-func (t *Telegram) revokeChatInviteLink(params *requests.RevokeChatInviteLink) (*models.InviteLink, error) {
+// EditChatInviteLink 编辑群组邀请链接
+func (t *Telegram) EditChatInviteLink(params *requests.CreateChatInviteLink) (*models.InviteLink, error) {
+	var apiResponse *models.Response[models.InviteLink]
+	err := t.post("editChatInviteLink", params, &apiResponse)
+	if err != nil {
+		return nil, err
+	}
+	if !apiResponse.Ok {
+		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
+	}
+	return apiResponse.Result, nil
+}
+
+// RevokeChatInviteLink 撤销群组邀请链接
+func (t *Telegram) RevokeChatInviteLink(params *requests.RevokeChatInviteLink) (*models.InviteLink, error) {
 	var apiResponse *models.Response[models.InviteLink]
 	err := t.post("createChatInviteLink", params, &apiResponse)
 	if err != nil {
