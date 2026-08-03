@@ -5,7 +5,7 @@ import (
 	"github.com/jonneyless/telegram-api/utils"
 )
 
-type EditMessage struct {
+type EditMessageText struct {
 	ChatId             int64               `json:"chat_id"`
 	MessageId          int64               `json:"message_id"`
 	Text               string              `json:"text,omitempty"`
@@ -15,7 +15,7 @@ type EditMessage struct {
 	LinkPreviewOptions *LinkPreviewOptions `json:"link_preview_options,omitempty"`
 }
 
-func (p *EditMessage) GetParams() map[string]any {
+func (p *EditMessageText) GetParams() map[string]any {
 	parseMode := "html"
 	if p.ParseMode != "" {
 		parseMode = p.ParseMode
@@ -48,4 +48,27 @@ func (p *EditMessage) GetParams() map[string]any {
 	}
 
 	return params
+}
+
+type EditMessageCaption struct {
+	ChatId             int64               `json:"chat_id"`
+	MessageId          int64               `json:"message_id"`
+	Caption            string              `json:"caption,omitempty"`
+	ParseMode          string              `json:"parse_mode,omitempty"`
+	ReplyMarkup        *models.ReplyMarkup `json:"reply_markup,omitempty"`
+	LinkPreviewOptions *LinkPreviewOptions `json:"link_preview_options,omitempty"`
+}
+
+type EditMessageMedia struct {
+	ChatId      int64               `json:"chat_id"`
+	MessageId   int64               `json:"message_id"`
+	Media       InputMedia          `json:"media"`
+	ReplyMarkup *models.ReplyMarkup `json:"reply_markup,omitempty"`
+}
+
+type InputMedia struct {
+	Type      string `json:"type"`
+	Media     string `json:"media"`
+	Caption   string `json:"caption,omitempty"`
+	ParseMode string `json:"parse_mode,omitempty"`
 }
