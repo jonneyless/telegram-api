@@ -55,8 +55,8 @@ func (t *Telegram) post(path string, params any, result any) error {
 	// 使用 Resty 发送 POST 请求
 	resp, err := t.client.R().
 		SetBody(params).
-		SetResult(&result).
-		SetError(&result).
+		SetResult(result).
+		SetError(result).
 		Post(path)
 
 	if err != nil {
@@ -79,7 +79,7 @@ func (t *Telegram) postMultipart(path string, body *bytes.Buffer, contentType st
 	resp, err := t.client.R().
 		SetHeader("Content-Type", contentType).
 		SetBody(body.Bytes()).
-		SetResult(&result).
+		SetResult(result).
 		Post(path)
 
 	if err != nil {
@@ -434,7 +434,7 @@ func (t *Telegram) UnBanChatMember(params *requests.UnBan) (bool, error) {
 }
 
 // PromoteChatMember 提升群组成员权限
-func (t *Telegram) PromoteChatMember(params *requests.Promotable) (bool, error) {
+func (t *Telegram) PromoteChatMember(params requests.Promotable) (bool, error) {
 	var apiResponse *models.Response[bool]
 	err := t.post("promoteChatMember", params, &apiResponse)
 	if err != nil {
