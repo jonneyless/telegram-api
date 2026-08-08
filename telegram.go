@@ -434,7 +434,7 @@ func (t *Telegram) UnBanChatMember(params *requests.UnBan) (bool, error) {
 }
 
 // PromoteChatMember 提升群组成员权限
-func (t *Telegram) PromoteChatMember(params *requests.Promote) (bool, error) {
+func (t *Telegram) PromoteChatMember(params *requests.Promotable) (bool, error) {
 	var apiResponse *models.Response[bool]
 	err := t.post("promoteChatMember", params, &apiResponse)
 	if err != nil {
