@@ -1,45 +1,36 @@
 package requests
 
 import (
+	"github.com/bytedance/sonic"
 	"github.com/jonneyless/telegram-api/models"
 	"github.com/jonneyless/telegram-api/utils"
 )
 
 type SendDice struct {
 	ChatId              int64               `json:"chat_id"`
-	Emoji               *string             `json:"emoji,omitempty"`
-	DisableNotification *bool               `json:"disable_notification,omitempty"`
-	ProtectContent      *bool               `json:"protect_content,omitempty"`
+	Emoji               string              `json:"emoji,omitempty"`
+	DisableNotification bool                `json:"disable_notification,omitempty"`
+	ProtectContent      bool                `json:"protect_content,omitempty"`
 	ReplyParameters     *ReplyParameters    `json:"reply_parameters,omitempty"`
 	ReplyMarkup         *models.ReplyMarkup `json:"reply_markup,omitempty"`
+	Buttons             [][]map[string]any  `json:"-"`
+	ButtonType          string              `json:"-"`
 }
 
-func (p *SendDice) GetParams() map[string]any {
-	params := map[string]any{
-		"chat_id":              p.ChatId,
-		"emoji":                "🎲",
-		"disable_notification": p.DisableNotification,
-		"protect_content":      p.ProtectContent,
+func (p *SendDice) MarshalJSON() ([]byte, error) {
+	data := *p
+
+	if data.Emoji == "" {
+		data.Emoji = "🎲"
 	}
 
-	if p.Emoji != nil {
-		params["emoji"] = *p.Emoji
-	}
-
-	if p.ReplyMarkup != nil {
-		params["reply_markup"] = utils.Struct2Map(p.ReplyMarkup)
-	}
-
-	if p.ReplyParameters != nil {
-		replyParameters := map[string]any{
-			"message_id": p.ReplyParameters.MessageId,
+	if len(data.Buttons) >= 1 {
+		if data.ButtonType == "keyboard" {
+			data.ReplyMarkup = utils.SetKeyboard(data.Buttons, true)
+		} else {
+			data.ReplyMarkup = utils.SetInlineKeyboard(data.Buttons)
 		}
-		if p.ReplyParameters.ChatId != 0 {
-			replyParameters["chat_id"] = p.ReplyParameters.ChatId
-		}
-
-		params["reply_parameters"] = replyParameters
 	}
 
-	return params
+	return sonic.Marshal(data)
 }

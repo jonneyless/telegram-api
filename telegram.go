@@ -109,7 +109,7 @@ func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*M
 		apiPath = "sendDocument"
 	}
 
-	err := t.post(apiPath, params.GetParams(), &apiResponse)
+	err := t.post(apiPath, params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
@@ -141,36 +141,14 @@ func (t *Telegram) SendMessage(params *requests.SendMessage, deleteOptions ...*M
 	return apiResponse.Result, nil
 }
 
-// EditMessageText 编辑消息文本
-func (t *Telegram) EditMessageText(params *requests.EditMessageText) (*models.Message, error) {
+// EditMessage 编辑消息
+func (t *Telegram) EditMessage(params *requests.EditMessage) (*models.Message, error) {
 	var apiResponse *models.Response[models.Message]
-	err := t.post("editMessageText", params.GetParams(), &apiResponse)
-	if err != nil {
-		return nil, err
+	apiPath := "editMessageText"
+	if params.Media != nil {
+		apiPath = "editMessageMedia"
 	}
-	if !apiResponse.Ok {
-		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
-	}
-	return apiResponse.Result, nil
-}
-
-// EditMessageCaption 编辑消息文本
-func (t *Telegram) EditMessageCaption(params *requests.EditMessageCaption) (*models.Message, error) {
-	var apiResponse *models.Response[models.Message]
-	err := t.post("editMessageText", params, &apiResponse)
-	if err != nil {
-		return nil, err
-	}
-	if !apiResponse.Ok {
-		return nil, fmt.Errorf("telegram error: %s", apiResponse.Description)
-	}
-	return apiResponse.Result, nil
-}
-
-// EditMessageMedia 编辑媒体先遨嬉
-func (t *Telegram) EditMessageMedia(params *requests.EditMessageMedia) (*models.Message, error) {
-	var apiResponse *models.Response[models.Message]
-	err := t.post("editMessageMedia", params, &apiResponse)
+	err := t.post(apiPath, params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"github.com/bytedance/sonic"
 	"github.com/jonneyless/telegram-api/models"
 	"github.com/jonneyless/telegram-api/utils"
 )
@@ -8,53 +9,43 @@ import (
 type SendPoll struct {
 	ChatId                int64               `json:"chat_id"`
 	Question              string              `json:"question"`
+	QuestionParseMode     string              `json:"question_parse_mode"`
 	Options               []InputPollOption   `json:"options"`
-	Type                  *string             `json:"type,omitempty"`
-	OpenPeriod            *int64              `json:"open_period,omitempty"`
-	CloseDate             *int64              `json:"close_date,omitempty"`
-	IsAnonymous           *bool               `json:"is_anonymous,omitempty"`
-	IsClosed              *bool               `json:"is_closed,omitempty"`
-	AllowsMultipleAnswers *bool               `json:"allows_multiple_answers,omitempty"`
-	Explanation           *string             `json:"explanation,omitempty"`
-	DisableNotification   *bool               `json:"disable_notification,omitempty"`
-	ProtectContent        *bool               `json:"protect_content,omitempty"`
+	Type                  string              `json:"type,omitempty"`
+	OpenPeriod            int64               `json:"open_period,omitempty"`
+	CloseDate             int64               `json:"close_date,omitempty"`
+	IsAnonymous           bool                `json:"is_anonymous"`
+	IsClosed              bool                `json:"is_closed"`
+	AllowsMultipleAnswers bool                `json:"allows_multiple_answers"`
+	Explanation           string              `json:"explanation,omitempty"`
+	DisableNotification   bool                `json:"disable_notification"`
+	ProtectContent        bool                `json:"protect_content"`
 	ReplyParameters       *ReplyParameters    `json:"reply_parameters,omitempty"`
 	ReplyMarkup           *models.ReplyMarkup `json:"reply_markup,omitempty"`
+	Buttons               [][]map[string]any  `json:"-"`
+	ButtonType            string              `json:"-"`
 }
 
-func (p *SendPoll) GetParams() map[string]any {
-	params := map[string]any{
-		"chat_id":                 p.ChatId,
-		"question":                p.Question,
-		"question_parse_mode":     "html",
-		"type":                    "regular",
-		"is_anonymous":            p.IsAnonymous,
-		"is_closed":               p.IsClosed,
-		"allows_multiple_answers": p.AllowsMultipleAnswers,
-		"disable_notification":    p.DisableNotification,
-		"protect_content":         p.ProtectContent,
+func (p *SendPoll) MarshalJSON() ([]byte, error) {
+	data := *p
+
+	if data.QuestionParseMode == "" {
+		data.QuestionParseMode = "html"
 	}
 
-	if p.Type != nil {
-		params["type"] = p.Type
+	if data.Type == "" {
+		data.Type = "regular"
 	}
 
-	if p.CloseDate != nil {
-		params["close_date"] = p.CloseDate
+	if len(data.Buttons) >= 1 {
+		if data.ButtonType == "keyboard" {
+			data.ReplyMarkup = utils.SetKeyboard(data.Buttons, true)
+		} else {
+			data.ReplyMarkup = utils.SetInlineKeyboard(data.Buttons)
+		}
 	}
 
-	if p.Explanation != nil {
-		params["explanation"] = p.Explanation
-	}
-
-	options := make([]map[string]any, 0)
-	for _, option := range p.Options {
-		item := utils.Struct2Map(option)
-		options = append(options, item)
-	}
-	params["options"] = options
-
-	return params
+	return sonic.Marshal(data)
 }
 
 type InputPollOption struct {

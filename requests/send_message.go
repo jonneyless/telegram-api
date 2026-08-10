@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"github.com/bytedance/sonic"
 	"github.com/jonneyless/telegram-api/models"
 	"github.com/jonneyless/telegram-api/utils"
 )
@@ -14,83 +15,29 @@ type SendMessage struct {
 	Document            string              `json:"document,omitempty"`
 	ParseMode           string              `json:"parse_mode,omitempty"`
 	ReplyMarkup         *models.ReplyMarkup `json:"reply_markup,omitempty"`
-	Buttons             [][]map[string]any  `json:"buttons"`
-	ButtonType          string              `json:"button_type"`
 	DisableNotification bool                `json:"disable_notification,omitempty"`
 	LinkPreviewOptions  *LinkPreviewOptions `json:"link_preview_options,omitempty"`
 	ReplyParameters     *ReplyParameters    `json:"reply_parameters,omitempty"`
+	Buttons             [][]map[string]any  `json:"-"`
+	ButtonType          string              `json:"-"`
 }
 
-func (p *SendMessage) GetParams() map[string]any {
-	parseMode := "html"
-	if p.ParseMode != "" {
-		parseMode = p.ParseMode
+func (p *SendMessage) MarshalJSON() ([]byte, error) {
+	data := *p
+
+	if data.ParseMode == "" {
+		data.ParseMode = "html"
 	}
 
-	params := map[string]any{
-		"chat_id":              p.ChatId,
-		"text":                 p.Text,
-		"parse_mode":           parseMode,
-		"disable_notification": p.DisableNotification,
-	}
-
-	if p.Photo != "" || p.Video != "" || p.Audio != "" || p.Document != "" {
-		params = map[string]any{
-			"chat_id":              p.ChatId,
-			"caption":              p.Text,
-			"parse_mode":           parseMode,
-			"disable_notification": p.DisableNotification,
-		}
-
-		if p.Photo != "" {
-			params["photo"] = p.Photo
-		} else if p.Video != "" {
-			params["video"] = p.Video
-		} else if p.Audio != "" {
-			params["audio"] = p.Audio
-		} else if p.Document != "" {
-			params["document"] = p.Document
-		}
-	}
-
-	if p.ReplyMarkup != nil {
-		params["reply_markup"] = utils.Struct2Map(p.ReplyMarkup)
-	} else if len(p.Buttons) > 0 {
-		if p.ButtonType == "keyboard" {
-			params["reply_markup"] = map[string]any{
-				"keyboard":        p.Buttons,
-				"resize_keyboard": true,
-			}
+	if len(data.Buttons) >= 1 {
+		if data.ButtonType == "keyboard" {
+			data.ReplyMarkup = utils.SetKeyboard(data.Buttons, true)
 		} else {
-			params["reply_markup"] = map[string]any{
-				"inline_keyboard": p.Buttons,
-			}
+			data.ReplyMarkup = utils.SetInlineKeyboard(data.Buttons)
 		}
 	}
 
-	if p.LinkPreviewOptions != nil {
-		linkPreviewOptions := map[string]any{
-			"is_disabled": p.LinkPreviewOptions.IsDisabled,
-		}
-		if p.LinkPreviewOptions.Url != "" {
-			linkPreviewOptions["url"] = p.LinkPreviewOptions.Url
-		}
-
-		params["link_preview_options"] = linkPreviewOptions
-	}
-
-	if p.ReplyParameters != nil {
-		replyParameters := map[string]any{
-			"message_id": p.ReplyParameters.MessageId,
-		}
-		if p.ReplyParameters.ChatId != 0 {
-			replyParameters["chat_id"] = p.ReplyParameters.ChatId
-		}
-
-		params["reply_parameters"] = replyParameters
-	}
-
-	return params
+	return sonic.Marshal(data)
 }
 
 type LinkPreviewOptions struct {

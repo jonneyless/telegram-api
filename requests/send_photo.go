@@ -2,11 +2,11 @@ package requests
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"mime/multipart"
 
+	"github.com/bytedance/sonic"
 	"github.com/jonneyless/telegram-api/models"
 )
 
@@ -17,7 +17,6 @@ type SendPhoto struct {
 	ParseMode           *string             `json:"parse_mode,omitempty"`
 	ReplyMarkup         *models.ReplyMarkup `json:"reply_markup,omitempty"`
 	Buttons             [][]map[string]any  `json:"buttons"`
-	ButtonType          string              `json:"button_type"`
 	DisableNotification bool                `json:"disable_notification"`
 	LinkPreviewOptions  *LinkPreviewOptions `json:"link_preview_options,omitempty"`
 	ReplyParameters     *ReplyParameters    `json:"reply_parameters,omitempty"`
@@ -60,7 +59,7 @@ func (s *SendPhoto) ToMultipart() (*bytes.Buffer, string, error) {
 	}
 
 	if s.ReplyMarkup != nil {
-		replyMarkupJSON, err := json.Marshal(s.ReplyMarkup)
+		replyMarkupJSON, err := sonic.Marshal(s.ReplyMarkup)
 		if err != nil {
 			return nil, "", fmt.Errorf("序列化 reply_markup 失败: %w", err)
 		}
@@ -74,7 +73,7 @@ func (s *SendPhoto) ToMultipart() (*bytes.Buffer, string, error) {
 	}
 
 	if s.LinkPreviewOptions != nil {
-		linkPreviewJSON, err := json.Marshal(s.LinkPreviewOptions)
+		linkPreviewJSON, err := sonic.Marshal(s.LinkPreviewOptions)
 		if err != nil {
 			return nil, "", fmt.Errorf("序列化 link_preview_options 失败: %w", err)
 		}
@@ -84,7 +83,7 @@ func (s *SendPhoto) ToMultipart() (*bytes.Buffer, string, error) {
 	}
 
 	if s.ReplyParameters != nil {
-		replyParamsJSON, err := json.Marshal(s.ReplyParameters)
+		replyParamsJSON, err := sonic.Marshal(s.ReplyParameters)
 		if err != nil {
 			return nil, "", fmt.Errorf("序列化 reply_parameters 失败: %w", err)
 		}
@@ -112,10 +111,10 @@ func (s *SendPhoto) writeButtonsAsReplyMarkup(writer *multipart.Writer) error {
 				button.Text = text
 			}
 			if callbackData, ok := btn["callback_data"].(string); ok {
-				button.CallbackData = &callbackData
+				button.CallbackData = callbackData
 			}
 			if url, ok := btn["url"].(string); ok {
-				button.URL = &url
+				button.URL = url
 			}
 
 			buttonRow = append(buttonRow, button)
@@ -127,7 +126,7 @@ func (s *SendPhoto) writeButtonsAsReplyMarkup(writer *multipart.Writer) error {
 		InlineKeyboard: keyboard,
 	}
 
-	replyMarkupJSON, err := json.Marshal(replyMarkup)
+	replyMarkupJSON, err := sonic.Marshal(replyMarkup)
 	if err != nil {
 		return fmt.Errorf("序列化 buttons 到 reply_markup 失败: %w", err)
 	}

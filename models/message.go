@@ -40,6 +40,7 @@ type Message struct {
 	Document             *Document       `json:"document,omitempty"`
 	Dice                 *Dice           `json:"dice,omitempty"`
 	Poll                 *Poll           `json:"poll,omitempty"`
+	ChatShared           *ChatShared     `json:"chat_shared,omitempty"`
 }
 
 // ReplyToMessage struct
