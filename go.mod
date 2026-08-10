@@ -9,6 +9,7 @@ require (
 	github.com/cloudwego/base64x v0.1.6 // indirect
 	github.com/go-resty/resty/v2 v2.17.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.9 // indirect
+	github.com/spf13/cast v1.10.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.28.0 // indirect

@@ -171,6 +171,11 @@ func (m *Message) IsPinnedMessage() bool {
 	return m.PinnedMessage != nil
 }
 
+// IsChatShared 群组分享
+func (m *Message) IsChatShared() bool {
+	return m.ChatShared != nil
+}
+
 // IsMessage 普通消息
 func (m *Message) IsMessage() bool {
 	return m.IsTextMessage() || m.IsPhoto() || m.IsSticker() || m.IsDocument() || m.IsVideo() || m.IsAudio() || m.IsVoice()

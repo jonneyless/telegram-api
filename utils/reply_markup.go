@@ -1,6 +1,9 @@
 package utils
 
-import "github.com/jonneyless/telegram-api/models"
+import (
+	"github.com/jonneyless/telegram-api/models"
+	"github.com/spf13/cast"
+)
 
 func SetInlineKeyboard(data [][]map[string]any) *models.ReplyMarkup {
 	inlineKeyboard := make([][]models.InlineKeyboardButton, 0)
@@ -105,11 +108,7 @@ func convertKeyboardButtonRequestChat(m map[string]any) *models.KeyboardButtonRe
 	requestChat := &models.KeyboardButtonRequestChat{}
 
 	if val, ok := m["request_id"]; ok {
-		if s, ok := val.(int32); ok {
-			requestChat.RequestId = s
-		} else {
-			return nil
-		}
+		requestChat.RequestId = cast.ToInt32(val)
 	}
 
 	if val, ok := m["chat_is_channel"]; ok {

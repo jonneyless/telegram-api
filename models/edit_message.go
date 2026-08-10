@@ -2,23 +2,23 @@ package models
 
 // EditedMessage struct
 type EditedMessage struct {
-	MessageID   int64       `json:"message_id"`
-	From        From        `json:"from"`
-	Chat        Chat        `json:"chat"`
-	Date        int64       `json:"date"`
-	EditDate    int64       `json:"edit_date"`
-	Text        *string     `json:"text,omitempty"`
-	Caption     *string     `json:"caption,omitempty"`
-	ReplyMarkup ReplyMarkup `json:"reply_markup"`
-	Entities    []Entities  `json:"entities"`
-	Photo       *[]Photo    `json:"photo,omitempty"`
-	Sticker     *Sticker    `json:"sticker,omitempty"`
-	Video       *Video      `json:"video,omitempty"`
-	Audio       *Audio      `json:"audio,omitempty"`
-	Voice       *Voice      `json:"voice,omitempty"`
-	Document    *Document   `json:"document,omitempty"`
-	Dice        *Dice       `json:"dice,omitempty"`
-	Poll        *Poll       `json:"poll,omitempty"`
+	MessageID   int64        `json:"message_id"`
+	From        From         `json:"from"`
+	Chat        Chat         `json:"chat"`
+	Date        int64        `json:"date"`
+	EditDate    int64        `json:"edit_date"`
+	Text        *string      `json:"text,omitempty"`
+	Caption     *string      `json:"caption,omitempty"`
+	ReplyMarkup *ReplyMarkup `json:"reply_markup,omitempty"`
+	Entities    *[]Entities  `json:"entities,omitempty"`
+	Photo       *[]Photo     `json:"photo,omitempty"`
+	Sticker     *Sticker     `json:"sticker,omitempty"`
+	Video       *Video       `json:"video,omitempty"`
+	Audio       *Audio       `json:"audio,omitempty"`
+	Voice       *Voice       `json:"voice,omitempty"`
+	Document    *Document    `json:"document,omitempty"`
+	Dice        *Dice        `json:"dice,omitempty"`
+	Poll        *Poll        `json:"poll,omitempty"`
 }
 
 // IsMessage 普通消息
