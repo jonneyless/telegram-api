@@ -51,6 +51,11 @@ type ReplyToMessage struct {
 	Date        int64        `json:"date"`
 	Text        *string      `json:"text,omitempty"`
 	Photo       *[]Photo     `json:"photo,omitempty"`
+	Sticker     *Sticker     `json:"sticker,omitempty"`
+	Video       *Video       `json:"video,omitempty"`
+	Audio       *Audio       `json:"audio,omitempty"`
+	Voice       *Voice       `json:"voice,omitempty"`
+	Document    *Document    `json:"document,omitempty"`
 	ReplyMarkup *ReplyMarkup `json:"reply_markup,omitempty"`
 	Entities    *[]Entities  `json:"entities,omitempty"`
 }
