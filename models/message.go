@@ -50,6 +50,7 @@ type ReplyToMessage struct {
 	Chat        Chat         `json:"chat"`
 	Date        int64        `json:"date"`
 	Text        *string      `json:"text,omitempty"`
+	Photo       *[]Photo     `json:"photo,omitempty"`
 	ReplyMarkup *ReplyMarkup `json:"reply_markup,omitempty"`
 	Entities    *[]Entities  `json:"entities,omitempty"`
 }
