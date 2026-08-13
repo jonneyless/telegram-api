@@ -147,6 +147,8 @@ func (t *Telegram) EditMessage(params *requests.EditMessage) (*models.Message, e
 	apiPath := "editMessageText"
 	if params.Media != nil {
 		apiPath = "editMessageMedia"
+	} else if params.Caption != "" {
+		apiPath = "editMessageCaption"
 	}
 	err := t.post(apiPath, params, &apiResponse)
 	if err != nil {
