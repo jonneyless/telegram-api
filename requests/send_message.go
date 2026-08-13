@@ -9,6 +9,7 @@ import (
 type SendMessage struct {
 	ChatId              int64               `json:"chat_id"`
 	Text                string              `json:"text,omitempty"`
+	Caption             string              `json:"caption,omitempty"`
 	Photo               string              `json:"photo,omitempty"`
 	Video               string              `json:"video,omitempty"`
 	Audio               string              `json:"audio,omitempty"`
@@ -34,6 +35,13 @@ func (p *SendMessage) MarshalJSON() ([]byte, error) {
 			data.ReplyMarkup = utils.SetKeyboard(data.Buttons, true)
 		} else {
 			data.ReplyMarkup = utils.SetInlineKeyboard(data.Buttons)
+		}
+	}
+
+	if data.Photo != "" || data.Video != "" || data.Document != "" || data.Audio != "" {
+		if p.Text != "" {
+			data.Text = ""
+			data.Caption = p.Text
 		}
 	}
 

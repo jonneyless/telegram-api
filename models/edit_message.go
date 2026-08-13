@@ -8,6 +8,7 @@ type EditedMessage struct {
 	Date        int64        `json:"date"`
 	EditDate    int64        `json:"edit_date"`
 	Text        *string      `json:"text,omitempty"`
+	SenderTag   *string      `json:"sender_tag,omitempty"`
 	Caption     *string      `json:"caption,omitempty"`
 	ReplyMarkup *ReplyMarkup `json:"reply_markup,omitempty"`
 	Entities    *[]Entities  `json:"entities,omitempty"`
