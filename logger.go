@@ -6,7 +6,7 @@ import (
 )
 
 var logger Logger = &defaultLogger{
-	logger: log.New(os.Stdout, "", log.LstdFlags|log.Lmicroseconds|log.Lshortfile),
+	logger: log.New(os.Stdout, "", log.LstdFlags),
 }
 
 func SetLogger(l Logger) {
@@ -39,7 +39,7 @@ type defaultLogger struct {
 // NewDefaultLogger 创建默认日志器
 func NewDefaultLogger() Logger {
 	return &defaultLogger{
-		logger: log.New(os.Stdout, "", log.LstdFlags|log.Lmicroseconds|log.Lshortfile),
+		logger: log.New(os.Stdout, "", log.LstdFlags),
 	}
 }
 
