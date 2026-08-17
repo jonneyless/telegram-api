@@ -63,6 +63,10 @@ func (t *Telegram) post(path string, params any, result any) error {
 		return err
 	}
 
+	if result != nil {
+		return nil
+	}
+
 	// 检查 HTTP 状态码
 	if resp.StatusCode() >= 400 {
 		return fmt.Errorf("HTTP error: %d", resp.StatusCode())
