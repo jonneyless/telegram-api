@@ -55,8 +55,8 @@ func newRestyClient(cfg *Config) *resty.Client {
 			}
 		}
 
-		// 如果响应状态码 >= 400，记录错误日志
-		if resp.StatusCode() >= 400 {
+		// 如果响应状态码 >= 500，记录错误日志 400 错误多半是业务逻辑
+		if resp.StatusCode() >= 500 {
 			logger.Errorf("HTTP Error: %d, URL: %s, Duration: %v", resp.StatusCode(), resp.Request.URL, elapsed)
 		}
 

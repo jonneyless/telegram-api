@@ -53,7 +53,7 @@ func (t *Telegram) post(path string, params any, result any) error {
 	}
 
 	// 使用 Resty 发送 POST 请求
-	resp, err := t.client.R().
+	_, err := t.client.R().
 		SetBody(params).
 		SetResult(result).
 		SetError(result).
@@ -61,15 +61,6 @@ func (t *Telegram) post(path string, params any, result any) error {
 
 	if err != nil {
 		return err
-	}
-
-	if result != nil {
-		return nil
-	}
-
-	// 检查 HTTP 状态码
-	if resp.StatusCode() >= 400 {
-		return fmt.Errorf("HTTP error: %d", resp.StatusCode())
 	}
 
 	return nil
@@ -80,7 +71,7 @@ func (t *Telegram) postMultipart(path string, body *bytes.Buffer, contentType st
 		return fmt.Errorf("bot token empty")
 	}
 
-	resp, err := t.client.R().
+	_, err := t.client.R().
 		SetHeader("Content-Type", contentType).
 		SetBody(body.Bytes()).
 		SetResult(result).
@@ -88,11 +79,6 @@ func (t *Telegram) postMultipart(path string, body *bytes.Buffer, contentType st
 
 	if err != nil {
 		return err
-	}
-
-	// 检查 HTTP 状态码
-	if resp.StatusCode() >= 400 {
-		return fmt.Errorf("HTTP error: %d", resp.StatusCode())
 	}
 
 	return nil
