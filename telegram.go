@@ -510,7 +510,7 @@ func (t *Telegram) EditChatInviteLink(params *requests.CreateChatInviteLink) (*m
 // RevokeChatInviteLink 撤销群组邀请链接
 func (t *Telegram) RevokeChatInviteLink(params *requests.RevokeChatInviteLink) (*models.InviteLink, error) {
 	var apiResponse *models.Response[models.InviteLink]
-	err := t.post("createChatInviteLink", params, &apiResponse)
+	err := t.post("revokeChatInviteLink", params, &apiResponse)
 	if err != nil {
 		return nil, err
 	}
