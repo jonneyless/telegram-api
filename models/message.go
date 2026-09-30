@@ -50,6 +50,7 @@ type ReplyToMessage struct {
 	Chat        Chat         `json:"chat"`
 	Date        int64        `json:"date"`
 	Text        *string      `json:"text,omitempty"`
+	Caption     *string      `json:"caption,omitempty"`
 	Photo       *[]Photo     `json:"photo,omitempty"`
 	Sticker     *Sticker     `json:"sticker,omitempty"`
 	Video       *Video       `json:"video,omitempty"`
