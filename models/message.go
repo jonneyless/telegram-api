@@ -314,3 +314,103 @@ func (m *Message) FileInfo() *FileInfo {
 
 	return info
 }
+
+// IsMessage 普通消息
+func (m *ReplyToMessage) IsMessage() bool {
+	return m.IsTextMessage() || m.IsPhoto() || m.IsSticker() || m.IsDocument() || m.IsVideo() || m.IsAudio() || m.IsVoice()
+}
+
+// IsTextMessage 文本消息
+func (m *ReplyToMessage) IsTextMessage() bool {
+	return m.Text != nil
+}
+
+// IsPhoto 图片消息
+func (m *ReplyToMessage) IsPhoto() bool {
+	return m.Photo != nil
+}
+
+// IsSticker 贴图消息
+func (m *ReplyToMessage) IsSticker() bool {
+	return m.Sticker != nil
+}
+
+// IsVideo 视频消息
+func (m *ReplyToMessage) IsVideo() bool {
+	return m.Video != nil
+}
+
+// IsAudio 音频消息
+func (m *ReplyToMessage) IsAudio() bool {
+	return m.Audio != nil
+}
+
+// IsVoice 语音消息
+func (m *ReplyToMessage) IsVoice() bool {
+	return m.Voice != nil
+}
+
+// IsDocument 文档消息
+func (m *ReplyToMessage) IsDocument() bool {
+	return m.Document != nil
+}
+
+func (m *ReplyToMessage) FileInfo() *FileInfo {
+	info := &FileInfo{}
+
+	if m.IsPhoto() {
+		info.Type = "photo"
+		for _, photo := range *m.Photo {
+			if info.FileSize < photo.FileSize {
+				info.FileId = photo.FileID
+				info.FileUniqueId = photo.FileUniqueID
+				info.FileSize = photo.FileSize
+				info.Width = &photo.Width
+				info.Height = &photo.Height
+			}
+		}
+	} else if m.IsVideo() {
+		info.Type = "video"
+		info.FileId = m.Video.FileID
+		info.FileUniqueId = m.Video.FileUniqueID
+		info.FileSize = m.Video.FileSize
+		info.Width = &m.Video.Width
+		info.Height = &m.Video.Height
+		info.FileName = &m.Video.FileName
+		info.Duration = &m.Video.Duration
+		info.MimeType = &m.Video.MimeType
+	} else if m.IsAudio() {
+		info.Type = "audio"
+		info.FileId = m.Audio.FileID
+		info.FileUniqueId = m.Audio.FileUniqueID
+		info.FileSize = m.Audio.FileSize
+		info.FileName = &m.Audio.FileName
+		info.Duration = &m.Audio.Duration
+		info.MimeType = &m.Audio.MimeType
+	} else if m.IsSticker() {
+		info.Type = "sticker"
+		info.FileId = m.Sticker.FileID
+		info.FileUniqueId = m.Sticker.FileUniqueID
+		info.FileSize = m.Sticker.FileSize
+		info.Width = &m.Sticker.Width
+		info.Height = &m.Sticker.Height
+	} else if m.IsDocument() {
+		info.Type = "document"
+		info.FileId = m.Document.FileID
+		info.FileUniqueId = m.Document.FileUniqueID
+		info.FileSize = m.Document.FileSize
+		info.FileName = &m.Document.FileName
+		info.MimeType = &m.Document.MimeType
+	} else if m.IsVoice() {
+		info.Type = "voice"
+		info.FileId = m.Voice.FileID
+		info.FileUniqueId = m.Voice.FileUniqueID
+		info.FileSize = m.Voice.FileSize
+		info.Duration = &m.Voice.Duration
+		info.MimeType = &m.Voice.MimeType
+	} else {
+		return nil
+	}
+
+	return info
+}
