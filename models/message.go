@@ -86,10 +86,11 @@ type Quote struct {
 
 // Entities struct
 type Entities struct {
-	Type   string `json:"type"`
-	Offset int64  `json:"offset"`
-	Length int64  `json:"length"`
-	User   *From  `json:"user,omitempty"`
+	Type          string `json:"type"`
+	Offset        int64  `json:"offset"`
+	Length        int64  `json:"length"`
+	CustomEmojiId string `json:"custom_emoji_id,omitempty"`
+	User          *From  `json:"user,omitempty"`
 }
 
 // IsCommand 匹配命令

@@ -19,6 +19,7 @@ type SendMessage struct {
 	DisableNotification bool                `json:"disable_notification,omitempty"`
 	LinkPreviewOptions  *LinkPreviewOptions `json:"link_preview_options,omitempty"`
 	ReplyParameters     *ReplyParameters    `json:"reply_parameters,omitempty"`
+	Entities            *[]models.Entities  `json:"entities,omitempty"`
 	Buttons             [][]map[string]any  `json:"-"`
 	ButtonType          string              `json:"-"`
 }
