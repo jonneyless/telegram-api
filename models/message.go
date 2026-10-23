@@ -41,6 +41,8 @@ type Message struct {
 	Dice                 *Dice           `json:"dice,omitempty"`
 	Poll                 *Poll           `json:"poll,omitempty"`
 	ChatShared           *ChatShared     `json:"chat_shared,omitempty"`
+	Location             *Location       `json:"location,omitempty"`
+	Venue                *Venue          `json:"venue,omitempty"`
 }
 
 // ReplyToMessage struct
@@ -59,6 +61,8 @@ type ReplyToMessage struct {
 	Document    *Document    `json:"document,omitempty"`
 	ReplyMarkup *ReplyMarkup `json:"reply_markup,omitempty"`
 	Entities    *[]Entities  `json:"entities,omitempty"`
+	Location    *Location    `json:"location,omitempty"`
+	Venue       *Venue       `json:"venue,omitempty"`
 }
 
 // ExternalReply struct
