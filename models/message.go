@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -190,7 +191,7 @@ func (m *Message) IsChatShared() bool {
 
 // IsMessage 普通消息
 func (m *Message) IsMessage() bool {
-	return m.IsTextMessage() || m.IsPhoto() || m.IsSticker() || m.IsDocument() || m.IsVideo() || m.IsAudio() || m.IsVoice()
+	return m.IsTextMessage() || m.IsPhoto() || m.IsSticker() || m.IsDocument() || m.IsVideo() || m.IsAudio() || m.IsVoice() || m.IsVenue()
 }
 
 // IsTextMessage 文本消息
@@ -228,6 +229,11 @@ func (m *Message) IsDocument() bool {
 	return m.Document != nil
 }
 
+// IsVenue 定位消息
+func (m *Message) IsVenue() bool {
+	return m.Venue != nil
+}
+
 func (m *Message) ChatId() int64 {
 	return m.Chat.ID
 }
@@ -243,6 +249,10 @@ func (m *Message) TextString() string {
 
 	if m.Caption != nil {
 		return *m.Caption
+	}
+
+	if m.Venue != nil {
+		return fmt.Sprintf("%s\n%s", m.Venue.Title, m.Venue.Address)
 	}
 
 	return ""
