@@ -96,6 +96,7 @@ type Entities struct {
 	Length        int64  `json:"length"`
 	CustomEmojiId string `json:"custom_emoji_id,omitempty"`
 	User          *From  `json:"user,omitempty"`
+	URL           string `json:"url,omitempty"`
 }
 
 // IsCommand 匹配命令
