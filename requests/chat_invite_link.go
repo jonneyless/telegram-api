@@ -8,6 +8,15 @@ type CreateChatInviteLink struct {
 	CreatesJoinRequest bool   `json:"creates_join_request,omitempty"`
 }
 
+type EditChatInviteLink struct {
+	ChatId             int64  `json:"chat_id"`
+	InviteLink         string `json:"invite_link"`
+	Name               string `json:"name,omitempty"`
+	ExpireDate         int64  `json:"expire_date,omitempty"`
+	MemberLimit        int64  `json:"member_limit,omitempty"`
+	CreatesJoinRequest bool   `json:"creates_join_request,omitempty"`
+}
+
 type RevokeChatInviteLink struct {
 	ChatId     int64  `json:"chat_id"`
 	InviteLink string `json:"invite_link"`

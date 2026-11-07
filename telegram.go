@@ -495,7 +495,7 @@ func (t *Telegram) CreateChatInviteLink(params *requests.CreateChatInviteLink) (
 }
 
 // EditChatInviteLink 编辑群组邀请链接
-func (t *Telegram) EditChatInviteLink(params *requests.CreateChatInviteLink) (*models.InviteLink, error) {
+func (t *Telegram) EditChatInviteLink(params *requests.EditChatInviteLink) (*models.InviteLink, error) {
 	var apiResponse *models.Response[models.InviteLink]
 	err := t.post("editChatInviteLink", params, &apiResponse)
 	if err != nil {
