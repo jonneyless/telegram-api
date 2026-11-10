@@ -313,7 +313,7 @@ func (t *Telegram) SetChatDescription(params *requests.ChatDescription) (bool, e
 }
 
 // PinChatMessage 置顶消息
-func (t *Telegram) PinChatMessage(params *requests.Message) (bool, error) {
+func (t *Telegram) PinChatMessage(params *requests.PinMessage) (bool, error) {
 	var apiResponse *models.Response[bool]
 	err := t.post("pinChatMessage", params, &apiResponse)
 	if err != nil {
